@@ -12,7 +12,14 @@
 
   <div class="ee-banner__hero page-width">
     {% if section.settings.bg_image != blank %}
-      <class="ee-banner__bg" src="{{ section.settings.bg_image | image_url: width: 2400 }}" alt="">
+      <img 
+  class="ee-banner__bg" 
+  src="{{ section.settings.bg_image | image_url: width: 2400 }}" 
+  alt="{{ section.settings.main_heading | escape }}" 
+  width="2400" 
+  height="auto">
+
+
     {% endif %}
 
     <h1 class="ee-banner__title">{{ section.settings.main_heading }}</h1>
