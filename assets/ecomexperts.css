@@ -24,3 +24,47 @@
   .ee-banner__top{grid-template-columns:1fr auto;gap:8px}
   .ee-banner__strip{grid-column:1 / -1;order:3}
 }
+/* ====== EE Grid ====== */
+.ee-grid__heading{
+  font-size: clamp(20px, 2.1vw, 24px);
+  font-weight: 600;
+  margin: 28px 0 16px;
+}
+.ee-grid__wrap{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px; /* tune to match Figma gutters */
+}
+.ee-card{position:relative}
+.ee-card__img{display:block; overflow:hidden; border:1px solid #e5e5e5}
+.ee-card__img img{display:block; width:100%; height:auto; aspect-ratio:1/1; object-fit:cover}
+.ee-card__title{
+  font-size:14px;
+  margin-top:8px;
+  line-height:1.25;
+}
+.ee-hotspot{
+  position:absolute;
+  right:12px;
+  top:12px;               /* adjust per Figma (some tiles show top-right) */
+  width:28px; height:28px;
+  border-radius:50%;
+  border:0;
+  background:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.22);
+  cursor:pointer;
+}
+
+/* Modal shell (content comes in Milestone 4) */
+.ee-modal{border:0; border-radius:10px; padding:0; max-width:380px}
+.ee-modal::backdrop{background:rgba(0,0,0,.45)}
+.ee-modal__close{position:absolute; right:8px; top:6px; border:0; background:none; font-size:18px}
+.ee-modal__content{padding:18px}
+
+/* Responsive */
+@media (max-width: 990px){
+  .ee-grid__wrap{grid-template-columns: repeat(2, 1fr);}
+}
+@media (max-width: 600px){
+  .ee-grid__wrap{grid-template-columns: 1fr;}
+}
