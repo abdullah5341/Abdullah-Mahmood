@@ -2,10 +2,12 @@
 <html
   class="no-js{% if request.design_mode %} shopify-design-mode{% endif %}"
   lang="{{ request.locale.iso_code }}"
-  {{ 'ecomexperts.css' | asset_url | stylesheet_tag }}
+
+
 
 >
   <head>
+    {{ 'ecomexperts.css' | asset_url | stylesheet_tag }}
     {%- render 'stylesheets' -%}
 
     {%- if settings.favicon != blank -%}
