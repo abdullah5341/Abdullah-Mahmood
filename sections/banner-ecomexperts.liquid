@@ -1,0 +1,53 @@
+<section class="ee-banner">
+  <div class="ee-banner__top page-width">
+    <div class="ee-banner__brand">{{ section.settings.brand_text }}</div>
+    <div class="ee-banner__strip">{{ section.settings.top_strip_text }}</div>
+    {% if section.settings.top_cta_label != blank %}
+      <a class="ee-btn ee-btn--top" href="{{ section.settings.top_cta_link }}">
+        <span>{{ section.settings.top_cta_label }}</span>
+        <span class="ee-btn__arrow" aria-hidden="true">→</span>
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="ee-banner__hero page-width">
+    {% if section.settings.bg_image != blank %}
+      <img class="ee-banner__bg" src="{{ section.settings.bg_image | image_url: width: 2400 }}" alt="">
+    {% endif %}
+
+    <h1 class="ee-banner__title">{{ section.settings.main_heading }}</h1>
+    <p class="ee-banner__sub">{{ section.settings.subheading }}</p>
+
+    {% if section.settings.primary_btn_label != blank %}
+      <a class="ee-btn ee-btn--primary" href="{{ section.settings.primary_btn_link }}">
+        <span>{{ section.settings.primary_btn_label }}</span>
+        <span class="ee-btn__arrow" aria-hidden="true">→</span>
+      </a>
+    {% endif %}
+
+    {% if section.settings.bottom_strip_text != blank %}
+      <div class="ee-banner__foot">{{ section.settings.bottom_strip_text }}</div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "EE • Banner (Custom)",
+  "settings": [
+    { "type": "text", "id": "brand_text", "label": "Brand (top-left)", "default": "TISSO VISON" },
+    { "type": "text", "id": "top_strip_text", "label": "Top thin strip text", "default": "Find the ideal gift for your loved ones." },
+    { "type": "text", "id": "top_cta_label", "label": "Top right button label", "default": "CHOOSE GIFT" },
+    { "type": "url",  "id": "top_cta_link",  "label": "Top right button link" },
+
+    { "type": "text", "id": "main_heading", "label": "Main heading", "default": "The Gift Guide" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading paragraph", "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season." },
+    { "type": "text", "id": "primary_btn_label", "label": "Primary button label", "default": "SHOP NOW" },
+    { "type": "url",  "id": "primary_btn_link",  "label": "Primary button link" },
+
+    { "type": "text", "id": "bottom_strip_text", "label": "Bottom thin strip text", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" },
+
+    { "type": "image_picker", "id": "bg_image", "label": "Background artwork (optional)" }
+  ]
+}
+{% endschema %}

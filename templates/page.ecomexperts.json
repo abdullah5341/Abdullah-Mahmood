@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "banner": { "type": "banner-ecomexperts", "settings": {} }
+  },
+  "order": ["banner"]
+}
