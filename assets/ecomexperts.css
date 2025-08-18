@@ -1,7 +1,7 @@
 /* ====== EcomExperts — page styles for Banner + Grid ====== */
 :root {
   --ee-max: 1440px;             /* Figma desktop width */
-  --ee-pad-x: 50px;             /* Figma 50px left/right padding inside canvas */
+  --ee-pad-x: 878px;             /* Figma 50px left/right padding inside canvas */
   --ee-text: #000;
   --ee-muted: #5f5f5f;
   --ee-accent: #f2c94c;         /* yellow choose gift */
@@ -62,7 +62,7 @@
   text-transform: uppercase;
   letter-spacing: .02em;
   border: 1px solid #000;
-  padding: 10px 16px;
+  padding: 10px 10px;
   background: #fff;
   color: #000;
   cursor: pointer;
