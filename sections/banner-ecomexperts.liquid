@@ -1,34 +1,61 @@
-<section class="ee-banner">
+{% comment %}
+EE • Banner (Custom)
+- Top bar (brand, strip text, yellow CTA)
+- Hero (bg line-art image, H1, paragraph, black CTA)
+- Thin bottom micro-strip
+{% endcomment %}
+
+<section class="ee-banner" id="ee-banner-{{ section.id }}">
+
+  <!-- Top bar -->
   <div class="ee-banner__top page-width">
     <div class="ee-banner__brand">{{ section.settings.brand_text }}</div>
-    <div class="ee-banner__strip">{{ section.settings.top_strip_text }}</div>
+    {% if section.settings.top_strip_text != blank %}
+      <div class="ee-banner__strip">{{ section.settings.top_strip_text }}</div>
+    {% endif %}
+
     {% if section.settings.top_cta_label != blank %}
-      <a class="ee-btn ee-btn--top" href="{{ section.settings.top_cta_link }}">
-        <span>{{ section.settings.top_cta_label }}</span>
-        <span class="ee-btn__arrow" aria-hidden="true">→</span>
-      </a>
+      <div class="ee-banner__cta">
+        <a
+          class="ee-btn ee-btn--top"
+          {% if section.settings.top_cta_link != blank %} href="{{ section.settings.top_cta_link }}" {% else %} href="#"{% endif %}
+        >
+          {{ section.settings.top_cta_label }}
+          <span class="ee-btn__arrow" aria-hidden="true"></span>
+        </a>
+      </div>
     {% endif %}
   </div>
 
+  <!-- Hero image + text -->
   <div class="ee-banner__hero page-width">
     {% if section.settings.bg_image != blank %}
-      <img 
-  class="ee-banner__bg" 
-  src="{{ section.settings.bg_image | image_url: width: 2400 }}" 
-  alt="{{ section.settings.main_heading | escape }}" 
-  width="2400" 
-  height="auto">
-
-
+      {% assign img = section.settings.bg_image %}
+      <img
+        class="ee-banner__bg"
+        src="{{ img | image_url: width: 1440, height: 878, crop: 'center' }}"
+        width="1440"
+        height="878"
+        alt="{{ img.alt | escape | default: section.settings.main_heading }}"
+        loading="eager"
+        fetchpriority="high"
+      >
     {% endif %}
 
-    <h1 class="ee-banner__title">{{ section.settings.main_heading }}</h1>
-    <p class="ee-banner__sub">{{ section.settings.subheading }}</p>
+    {% if section.settings.main_heading != blank %}
+      <h1 class="ee-banner__title">{{ section.settings.main_heading }}</h1>
+    {% endif %}
+
+    {% if section.settings.subheading != blank %}
+      <p class="ee-banner__sub">{{ section.settings.subheading }}</p>
+    {% endif %}
 
     {% if section.settings.primary_btn_label != blank %}
-      <a class="ee-btn ee-btn--primary" href="{{ section.settings.primary_btn_link }}">
-        <span>{{ section.settings.primary_btn_label }}</span>
-        <span class="ee-btn__arrow" aria-hidden="true">→</span>
+      <a
+        class="ee-btn ee-btn--primary"
+        {% if section.settings.primary_btn_link != blank %} href="{{ section.settings.primary_btn_link }}" {% else %} href="#"{% endif %}
+      >
+        {{ section.settings.primary_btn_label }}
       </a>
     {% endif %}
 
@@ -47,14 +74,20 @@
     { "type": "text", "id": "top_cta_label", "label": "Top right button label", "default": "CHOOSE GIFT" },
     { "type": "url",  "id": "top_cta_link",  "label": "Top right button link" },
 
+    { "type": "image_picker", "id": "bg_image", "label": "Hero background image (line-art)" },
+
     { "type": "text", "id": "main_heading", "label": "Main heading", "default": "The Gift Guide" },
-    { "type": "textarea", "id": "subheading", "label": "Subheading paragraph", "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season." },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading paragraph",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
+    },
     { "type": "text", "id": "primary_btn_label", "label": "Primary button label", "default": "SHOP NOW" },
     { "type": "url",  "id": "primary_btn_link",  "label": "Primary button link" },
 
-    { "type": "text", "id": "bottom_strip_text", "label": "Bottom thin strip text", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" },
-
-    { "type": "image_picker", "id": "bg_image", "label": "Background artwork (optional)" }
-  ]
+    { "type": "text", "id": "bottom_strip_text", "label": "Bottom micro strip text", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" }
+  ],
+  "presets": [{ "name": "EE • Banner (Custom)" }]
 }
 {% endschema %}
