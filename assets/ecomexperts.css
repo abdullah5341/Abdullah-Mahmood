@@ -59,7 +59,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: .02em;
   border: 1px solid #000;
   padding: 10px 16px;
