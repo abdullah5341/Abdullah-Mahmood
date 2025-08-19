@@ -1,7 +1,95 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "banner": { "type": "banner-ecomexperts", "settings": {} },
-    "grid":   { "type": "grid-ecomexperts",   "settings": {} }
+    "banner": {
+      "type": "banner-ecomexperts",
+      "settings": {
+        "brand_text": "TISSO VISON",
+        "top_strip_text": "Find the ideal gift for your loved ones.",
+        "top_cta_label": "CHOOSE GIFT",
+        "top_cta_link": "",
+        "main_heading": "The Gift Guide",
+        "subheading": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
+        "primary_btn_label": "SHOP NOW",
+        "primary_btn_link": "",
+        "bottom_strip_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+      }
+    },
+    "grid": {
+      "type": "grid-ecomexperts",
+      "blocks": {
+        "product_EJbhRB": {
+          "type": "product",
+          "settings": {
+            "product": "black-leather-bag",
+            "alt": "",
+            "caption": ""
+          }
+        },
+        "product_wpbbh6": {
+          "type": "product",
+          "settings": {
+            "product": "blue-silk-tuxedo",
+            "alt": "",
+            "caption": ""
+          }
+        },
+        "product_FfFz6Q": {
+          "type": "product",
+          "settings": {
+            "product": "chequered-red-shirt",
+            "alt": "",
+            "caption": ""
+          }
+        },
+        "product_xdrAGR": {
+          "type": "product",
+          "settings": {
+            "product": "classic-leather-jacket",
+            "alt": "",
+            "caption": ""
+          }
+        },
+        "product_iNUcnb": {
+          "type": "product",
+          "settings": {
+            "product": "classic-varsity-top",
+            "alt": "",
+            "caption": ""
+          }
+        },
+        "product_H7yjgT": {
+          "type": "product",
+          "settings": {
+            "product": "dark-denim-top",
+            "alt": "",
+            "caption": ""
+          }
+        }
+      },
+      "block_order": [
+        "product_EJbhRB",
+        "product_wpbbh6",
+        "product_FfFz6Q",
+        "product_xdrAGR",
+        "product_iNUcnb",
+        "product_H7yjgT"
+      ],
+      "settings": {
+        "heading": "Tisso vison in the wild"
+      }
+    }
   },
-  "order": ["banner", "grid"]
+  "order": [
+    "banner",
+    "grid"
+  ]
 }
