@@ -1,93 +1,87 @@
 {% comment %}
 EE • Banner (Custom)
-- Top bar (brand, strip text, yellow CTA)
-- Hero (bg line-art image, H1, paragraph, black CTA)
-- Thin bottom micro-strip
+Top strip (brand + center msg + yellow CTA)
+Hero with background illustration, title, sub, primary CTA
+Bottom micro strip
+Matches classes used in ecomexperts.css
 {% endcomment %}
 
 <section class="ee-banner" id="ee-banner-{{ section.id }}">
 
-  <!-- Top bar -->
-  <div class="ee-banner__top page-width">
-    <div class="ee-banner__brand">{{ section.settings.brand_text }}</div>
-    {% if section.settings.top_strip_text != blank %}
-      <div class="ee-banner__strip">{{ section.settings.top_strip_text }}</div>
-    {% endif %}
-
+  <!-- Top strip -->
+  <div class="ee-banner__top">
+    <div class="ee-banner__brand">{{ section.settings.brand | escape }}</div>
+    <div class="ee-banner__strip">{{ section.settings.center_strip | escape }}</div>
     {% if section.settings.top_cta_label != blank %}
-      <div class="ee-banner__cta">
-        <a
-          class="ee-btn ee-btn--top"
-          {% if section.settings.top_cta_link != blank %} href="{{ section.settings.top_cta_link }}" {% else %} href="#"{% endif %}
-        >
-          {{ section.settings.top_cta_label }}
-          <span class="ee-btn__arrow" aria-hidden="true"></span>
-        </a>
-      </div>
-    {% endif %}
-  </div>
-
-  <!-- Hero image + text -->
-  <div class="ee-banner__hero page-width">
-    {% if section.settings.bg_image != blank %}
-      {% assign img = section.settings.bg_image %}
-      <img
-        class="ee-banner__bg"
-        src="{{ img | image_url: width: 1440, height: 878, crop: 'center' }}"
-        width="1440"
-        height="878"
-        alt="{{ img.alt | escape | default: section.settings.main_heading }}"
-        loading="eager"
-        fetchpriority="high"
-      >
-    {% endif %}
-
-    {% if section.settings.main_heading != blank %}
-      <h1 class="ee-banner__title">{{ section.settings.main_heading }}</h1>
-    {% endif %}
-
-    {% if section.settings.subheading != blank %}
-      <p class="ee-banner__sub">{{ section.settings.subheading }}</p>
-    {% endif %}
-
-    {% if section.settings.primary_btn_label != blank %}
       <a
-        class="ee-btn ee-btn--primary"
-        {% if section.settings.primary_btn_link != blank %} href="{{ section.settings.primary_btn_link }}" {% else %} href="#"{% endif %}
+        class="ee-btn--top"
+        {% if section.settings.top_cta_url != blank %} href="{{ section.settings.top_cta_url }}"{% endif %}
       >
-        {{ section.settings.primary_btn_label }}
+        {{ section.settings.top_cta_label }}
       </a>
     {% endif %}
-
-    {% if section.settings.bottom_strip_text != blank %}
-      <div class="ee-banner__foot">{{ section.settings.bottom_strip_text }}</div>
-    {% endif %}
   </div>
+
+  <!-- Hero -->
+  <div class="ee-banner__hero">
+    {% if section.settings.bg_image %}
+      {{ section.settings.bg_image
+        | image_url: width: 2880
+        | image_tag:
+          class: 'ee-banner__bg',
+          alt: section.settings.bg_image.alt | default: section.settings.title
+      }}
+    {% endif %}
+
+    <div class="ee-banner__content">
+      {% if section.settings.title != blank %}
+        <h1 class="ee-banner__title">{{ section.settings.title }}</h1>
+      {% endif %}
+
+      {% if section.settings.subtitle != blank %}
+        <p class="ee-banner__sub">{{ section.settings.subtitle }}</p>
+      {% endif %}
+
+      {% if section.settings.primary_label != blank %}
+        <a
+          class="ee-btn--primary"
+          {% if section.settings.primary_url != blank %} href="{{ section.settings.primary_url }}"{% endif %}
+        >
+          {{ section.settings.primary_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Bottom micro-strip -->
+  {% if section.settings.bottom_strip != blank %}
+    <div class="ee-banner__foot">
+      {{ section.settings.bottom_strip }}
+    </div>
+  {% endif %}
+
+  {% schema %}
+  {
+    "name": "EE • Banner (Custom)",
+    "class": "ee-banner-section",
+    "settings": [
+      { "type": "text", "id": "brand", "label": "Brand (left, top strip)", "default": "TISSO VISON" },
+      { "type": "text", "id": "center_strip", "label": "Center message (top strip)", "default": "Find the ideal gift for your loved ones." },
+
+      { "type": "text", "id": "top_cta_label", "label": "Top CTA label (yellow button)", "default": "CHOOSE GIFT" },
+      { "type": "url",  "id": "top_cta_url",   "label": "Top CTA link" },
+
+      { "type": "image_picker", "id": "bg_image", "label": "Background illustration (hero)" },
+
+      { "type": "text", "id": "title", "label": "Hero title", "default": "The Gift Guide" },
+      { "type": "textarea", "id": "subtitle", "label": "Hero paragraph", "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season." },
+
+      { "type": "text", "id": "primary_label", "label": "Primary button label", "default": "SHOP NOW" },
+      { "type": "url",  "id": "primary_url",   "label": "Primary button link" },
+
+      { "type": "text", "id": "bottom_strip", "label": "Bottom micro-strip", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" }
+    ],
+    "presets": [{ "name": "EE • Banner (Custom)" }]
+  }
+  {% endschema %}
 </section>
-
-{% schema %}
-{
-  "name": "EE • Banner (Custom)",
-  "settings": [
-    { "type": "text", "id": "brand_text", "label": "Brand (top-left)", "default": "TISSO VISON" },
-    { "type": "text", "id": "top_strip_text", "label": "Top thin strip text", "default": "Find the ideal gift for your loved ones." },
-    { "type": "text", "id": "top_cta_label", "label": "Top right button label", "default": "CHOOSE GIFT" },
-    { "type": "url",  "id": "top_cta_link",  "label": "Top right button link" },
-
-    { "type": "image_picker", "id": "bg_image", "label": "Hero background image (line-art)" },
-
-    { "type": "text", "id": "main_heading", "label": "Main heading", "default": "The Gift Guide" },
-    {
-      "type": "textarea",
-      "id": "subheading",
-      "label": "Subheading paragraph",
-      "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
-    },
-    { "type": "text", "id": "primary_btn_label", "label": "Primary button label", "default": "SHOP NOW" },
-    { "type": "url",  "id": "primary_btn_link",  "label": "Primary button link" },
-
-    { "type": "text", "id": "bottom_strip_text", "label": "Bottom micro strip text", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" }
-  ],
-  "presets": [{ "name": "EE • Banner (Custom)" }]
-}
-{% endschema %}
