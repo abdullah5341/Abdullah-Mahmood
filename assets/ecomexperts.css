@@ -261,3 +261,24 @@
   width: 100%;
   height: auto;
 }
+
+/* ===== Compatibility shim with previous class names (no Liquid edits) ===== */
+/* Our earlier section used .ee-grid-section + .ee-grid__title + .ee-grid__items */
+.ee-grid-section { max-width: 1440px; margin-inline: auto; }
+.ee-grid-section { padding: 90px 50px 0; }
+.ee-grid-section .ee-grid__title { font-family: 'Lustria', serif; font-weight: 400; font-size: 36px; line-height: 120%; color: #000; margin: 0 0 30px; }
+
+/* Map items→wrap so layout snaps without changing markup */
+.ee-grid-section .ee-grid__items {
+  max-width: 1339px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Keep card/image rules consistent */
+.ee-grid-section .ee-card { position: relative; width: 100%; aspect-ratio: 433 / 444; overflow: hidden; }
+.ee-grid-section .ee-card__img,
+.ee-grid-section .ee-card__img img { width: 100%; height: 100%; display: block; }
+.ee-grid-section .ee-card__img img { object-fit: cover; object-position: center; }
