@@ -1,217 +1,246 @@
-/* ====== EcomExperts — page styles for Banner + Grid ====== */
-:root {
-  --ee-max: 1440px;             /* Figma desktop width */
-  --ee-pad-x: 878px;             /* Figma 50px left/right padding inside canvas */
-  --ee-text: #000;
-  --ee-muted: #5f5f5f;
-  --ee-accent: #f2c94c;         /* yellow choose gift */
-  --ee-border: #111;
-}
+/******************************************
+* EE — Desktop 22 (1440 x 2000)
+* Banner + 3x2 Grid
+* Only targets our custom sections:
+*   banner-ecomexperts.liquid
+*   grid-ecomexperts.liquid
+******************************************/
 
-/* Make sure our sections breathe edge-to-edge like Figma canvas */
-.ee-banner .page-width,
-.ee-grid.page-width,
-.ee-grid .ee-grid__wrap,
-.ee-banner__top.page-width {
-  max-width: var(--ee-max);
+/* ---------- Page frame (center at 1440) ---------- */
+.ee-banner,
+.ee-grid {
+  max-width: 1440px;
   margin-inline: auto;
-  padding-inline: min(var(--ee-pad-x), 4vw);
-}
-
-/* ---------------- Banner ---------------- */
-
-.ee-banner {
-  color: var(--ee-text);
   background: #fff;
 }
 
-/* top bar: brand (left), tiny strip text (center), yellow button (right) */
+/* ======================================================================
+   BANNER (Frame 1957)
+====================================================================== */
+
+/* Top strip (Frame 1956) */
 .ee-banner__top {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: center;     /* center the middle message */
   align-items: center;
-  gap: 16px;
-  padding-block: 10px;  /* matches Figma top/bottom 10-ish */
-  border-bottom: 1px solid #efefef;
-  font-family: Jost, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  gap: 360px;                  /* figma gap between left/center/right */
+  padding: 10px 50px;
+  height: 64px;
+  background: #F5F5F5;
 }
 
+/* Left brand (TISSO VISON) */
 .ee-banner__brand {
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  font-size: 14px;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 18px;             /* fits figma height ~19px */
+  letter-spacing: .02em;
 }
 
+/* Center tiny message */
 .ee-banner__strip {
-  justify-self: center;
-  font-size: 14px;     /* Figma text size 16, looks heavy; 14 reads cleaner */
-  line-height: 1;
-  color: #000;
-  white-space: nowrap;
+  width: 260px;                /* matches figma */
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 13px;           /* figma shows tight line height */
+  text-align: center;
 }
 
-.ee-banner__cta {
-  justify-self: end;
-}
-
-.ee-btn {
+/* Right yellow CTA */
+.ee-btn--top {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 600;
+  justify-content: center;
+  width: 207px;
+  height: 44px;
+  background: #FFF544;
+  border: 1.5px solid #000;
   text-transform: uppercase;
-  letter-spacing: .02em;
-  border: 1px solid #000;
-  padding: 10px 10px;
-  background: #fff;
-  color: #000;
-  cursor: pointer;
-  transition: transform .15s ease, background .15s ease, color .15s ease;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+}
+.ee-btn--top::after {          /* little arrow line (figma “Line 15”) */
+  content: "";
+  position: absolute;
+  right: 22px;
+  width: 28px;
+  height: 0;
+  border-top: 1.5px solid #000;
 }
 
-.ee-btn:hover { transform: translateY(-1px); }
-
-.ee-btn--top {
-  background: var(--ee-accent);
-  border-color: #000;
-}
-
-.ee-btn__arrow {
-  position: relative;
-  width: 14px; height: 14px;
-}
-.ee-btn__arrow::before,
-.ee-btn__arrow::after {
-  content:""; position:absolute; inset:0; margin:auto;
-  width: 8px; height: 2px; background:#000; transform-origin:right center;
-}
-.ee-btn__arrow::before { transform: rotate(45deg) translateX(2px); }
-.ee-btn__arrow::after  { transform: rotate(-45deg) translateX(2px); }
-
-/* hero block */
+/* Hero art area (Group 1000007949) */
 .ee-banner__hero {
   position: relative;
-  padding-block: clamp(24px, 5vw, 40px);
-  background: #fff;
+  height: 780px;               /* figma */
+  overflow: clip;
 }
 
+/* background illustration image */
 .ee-banner__bg {
-  width: 100%;
-  height: auto;
-  display: block;
-  border: 1px solid #000; /* Figma outline vibe */
-}
-
-/* Headline + subtext + CTA stack */
-.ee-banner__title {
-  margin-top: clamp(20px, 4vw, 36px);
-  font-family: Jost, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 700;
-  font-size: clamp(36px, 5vw, 64px); /* Figma ~64px @1440 */
-  line-height: 1.05;
-}
-
-.ee-banner__sub {
-  margin-top: 12px;
-  max-width: 460px; /* Figma copy block width ~430-460 */
-  font-size: 14px;
-  line-height: 1.5;
-  color: #000;
-}
-
-.ee-btn--primary {
-  margin-top: 16px;
-  background: #000;
-  color: #fff;
-  border-color: #000;
-  padding: 12px 18px;
-}
-.ee-btn--primary:hover {
-  background: #111;
-}
-
-/* thin micro strip under hero (centered) */
-.ee-banner__foot {
-  margin-top: clamp(18px, 3vw, 24px);
-  text-align: center;
-  font-size: 11px;
-  letter-spacing: .02em;
-  color: #000;
-}
-
-/* ---------------- Grid ---------------- */
-
-.ee-grid__heading {
-  font-family: Jost, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-weight: 600;
-  font-size: clamp(18px, 2vw, 22px);
-  margin: 24px 0 14px;
-}
-
-.ee-grid__wrap {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px; /* space between tiles */
-  margin-bottom: 40px;
-}
-
-.ee-card {
-  position: relative;
-}
-
-.ee-card__img {
-  display: block;
-  aspect-ratio: 1 / 1;        /* perfect squares like Figma */
-  overflow: hidden;
-  border: 1px solid #e7e7e7;
-  background: #f8f8f8;
-}
-.ee-card__img img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;          /* keep faces centered */
-  display: block;
+  object-fit: cover;
+  object-position: center top; /* crop like figma */
+  pointer-events: none;
 }
 
-.ee-card__title {
-  position: absolute;
-  inset: auto 10px 10px 10px; /* bottom-left caption like the comp (optional) */
-  color: transparent;         /* title hidden visually (Figma tiles are clean) */
+/* Content block positions to match figma “The Gift Guide” */
+.ee-banner__content {
+  position: relative;
+  /* these paddings place text approximately where figma shows it: */
+  padding-top: 330px;          /* push down into the hero */
+  padding-left: 67px;
+  max-width: 900px;
 }
 
-/* hotspot bubble (white dot with black stroke) */
-.ee-hotspot {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 2px solid #000;
-  background: #fff;
-  font-size: 0;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: transform .15s ease;
+/* Main heading */
+.ee-banner__title {
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 70px;
+  line-height: 1.0;            /* 100% per figma */
+  color: #000;
+  margin: 0 0 24px;
 }
-.ee-hotspot::after {
-  content: "";
-  width: 8px; height: 8px;
-  border-radius: 50%;
+
+/* Sub paragraph */
+.ee-banner__sub {
+  width: 483px;                /* lock to figma width */
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 140%;
+  color: #000;
+  margin: 0 0 24px;
+}
+
+/* Primary “Shop now” button (Component 207) */
+.ee-btn--primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 50px;
   background: #000;
+  color: #fff;
+  text-transform: uppercase;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 16px;
+  border: 1.5px solid #000;
 }
-.ee-hotspot:hover { transform: scale(1.06); }
-
-/* ---------------- Responsive ---------------- */
-
-@media (max-width: 1024px) {
-  .ee-grid__wrap { gap: 16px; }
+.ee-btn--primary::after {      /* white arrow line */
+  content: "";
+  position: absolute;
+  right: 24px;
+  width: 28px;
+  height: 0;
+  border-top: 1.5px solid #fff;
 }
-@media (max-width: 900px) {
+
+/* Bottom ultra-thin strip (Frame 1957 slim) */
+.ee-banner__foot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 50px;
+  gap: 375px;
+  height: 34px;
+  background: #F5F5F5;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 13px;
+  text-align: center;
+  color: #000;
+}
+
+/* Make the whole banner 878px height (64 top + 780 hero + 34 bottom) */
+.ee-banner {
+  height: 878px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ======================================================================
+   GRID (Tisso vison in the wild)
+====================================================================== */
+
+.ee-grid {
+  /* outer container spacing vs. banner bottom strip gap ≈ 90 in figma */
+  padding: 90px 50px 0;
+}
+
+.ee-grid__heading {
+  font-family: 'Lustria', serif;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 120%;
+  color: #000;
+  margin: 0 0 30px;
+}
+
+/* Wrap is 1337px wide in figma; let’s center inside the 1440 frame */
+.ee-grid__wrap {
+  max-width: 1339px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px; /* figma */
+}
+
+/* Card and image: enforce 433x444 figma look with square crop feel */
+.ee-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 433 / 444; /* keeps the same proportion on any screen */
+  overflow: hidden;
+}
+.ee-card__img,
+.ee-card__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.ee-card__img img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Hide the title under each tile for this figma (images only) */
+.ee-card__title { 
+  position: absolute;
+  inset: auto; 
+  clip: rect(0 0 0 0); 
+  width: 1px; height: 1px; overflow: hidden; 
+}
+
+/* Quick-view hotspot placeholder – hide for now (we’ll enable next step) */
+.ee-hotspot { display: none; }
+
+/* ======================================================================
+   RESPONSIVE (simple)
+====================================================================== */
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .ee-banner__content { padding-top: 280px; }
   .ee-grid__wrap { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 600px) {
-  .ee-banner__strip { font-size: 12px; }
+
+/* Mobile */
+@media (max-width: 700px) {
+  .ee-banner__top { gap: 24px; padding: 8px 16px; }
+  .ee-banner__content { padding: 240px 16px 0; }
+  .ee-banner__title { font-size: 46px; }
+  .ee-banner__sub { width: auto; font-size: 16px; }
+  .ee-banner__foot { padding: 8px 16px; gap: 24px; }
+  .ee-grid { padding: 48px 16px 0; }
   .ee-grid__wrap { grid-template-columns: 1fr; }
 }
