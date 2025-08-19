@@ -244,3 +244,14 @@
   .ee-grid { padding: 48px 16px 0; }
   .ee-grid__wrap { grid-template-columns: 1fr; }
 }
+.ee-card--empty .ee-card__placeholder{
+  width:100%;
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px dashed #ddd;
+  background:#f8f8f8;
+  color:#888;
+  font-size:14px;
+}
