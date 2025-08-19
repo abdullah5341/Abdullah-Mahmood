@@ -1,7 +1,8 @@
 {% comment %}
-EE • Grid (Custom Images)
-- 6 image slots configured from the Theme Editor
-- Renders a 3×2 grid with square-ish tiles (object-fit: cover)
+EE • Grid (Custom)
+- 6 tiles in a responsive 3 × 2 grid
+- Each tile can be a Product (featured image) or a Custom image
+- For Custom image you can EITHER pick an image (image_picker) OR paste a URL from Content > Files
 {% endcomment %}
 
 <section class="ee-grid page-width" id="ee-grid-{{ section.id }}">
@@ -9,58 +10,110 @@ EE • Grid (Custom Images)
     <h2 class="ee-grid__heading">{{ section.settings.heading }}</h2>
   {% endif %}
 
-  <div class="ee-grid__wrap" role="list">
+  <div class="ee-grid__wrap">
     {% for block in section.blocks %}
-      {% assign img = block.settings.image %}
-      <article class="ee-card" role="listitem" {{ block.shopify_attributes }}>
-        {% if img != blank %}
-          <img
-            src="{{ img | image_url: width: 900, height: 900, crop: 'center' }}"
-            width="900"
-            height="900"
-            alt="{{ block.settings.alt | escape }}"
-            loading="lazy"
-          >
-        {% else %}
-          <div class="ee-card__placeholder">Add image</div>
+      {% assign b = block.settings %}
+
+      {% comment %} Resolve image for this block {% endcomment %}
+      {% assign img_src = blank %}
+      {% assign img_alt = b.alt | default: '' %}
+
+      {% if block.type == 'product' and b.product %}
+        {% assign product = b.product %}
+        {% if product.featured_image %}
+          {% assign img_src = product.featured_image | image_url: width: 800, height: 800, crop: 'center' %}
+          {% assign img_alt = img_alt | default: product.title %}
         {% endif %}
-      </article>
+      {% elsif block.type == 'image' %}
+        {% if b.image != blank %}
+          {% assign img_src = b.image | image_url: width: 800, height: 800, crop: 'center' %}
+        {% elsif b.image_url != blank %}
+          {% assign img_src = b.image_url %}
+        {% endif %}
+      {% endif %}
+
+      {% if img_src != blank %}
+        <figure class="ee-card" {{ block.shopify_attributes }}>
+          <img class="ee-card__img"
+               src="{{ img_src }}"
+               alt="{{ img_alt | escape }}"
+               width="800" height="800"
+               loading="lazy">
+          {% if b.caption != blank %}
+            <figcaption class="ee-card__cap">{{ b.caption }}</figcaption>
+          {% endif %}
+        </figure>
+      {% endif %}
     {% endfor %}
   </div>
 
-  {% schema %}
-{
-  "name": "EE • Grid (Custom)",
-  "class": "ee-grid-section",
-  "settings": [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Tisso vison in the wild"
+  <style>
+    .ee-grid { margin-block: 32px 64px; }
+    .ee-grid__heading {
+      font-family: var(--font-heading, serif);
+      font-weight: 400;
+      font-size: 36px;
+      line-height: 1.2;
+      margin: 0 0 24px;
     }
-  ],
-  "blocks": [
-    {
-      "type": "product",
-      "name": "Product",
-      "settings": [
-        { "type": "product", "id": "product", "label": "Select product" }
-      ]
-    },
-    {
-      "type": "image",
-      "name": "Image",
-      "settings": [
-        { "type": "image_picker", "id": "image", "label": "Upload image" },
-        { "type": "text", "id": "alt", "label": "Alt text" },
-        { "type": "text", "id": "caption", "label": "Caption (optional)" }
-      ]
+    .ee-grid__wrap {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
     }
-  ],
-  "max_blocks": 6,
-  "presets": [{ "name": "EE • Grid (Custom)" }]
-}
-{% endschema %}
+    .ee-card { margin: 0; display: flex; flex-direction: column; }
+    .ee-card__img {
+      width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block;
+      background: #f5f5f5;
+    }
+    .ee-card__cap {
+      margin-top: 8px; font-size: 14px; line-height: 1.4; color: #333;
+    }
+    @media (max-width: 1024px) {
+      .ee-grid__wrap { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .ee-grid__wrap { grid-template-columns: 1fr; }
+    }
+  </style>
 
+  {% schema %}
+  {
+    "name": "EE • Grid (Custom)",
+    "class": "ee-grid-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "Tisso vison in the wild"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product",
+        "name": "Product",
+        "limit": 6,
+        "settings": [
+          { "type": "product", "id": "product", "label": "Select product" },
+          { "type": "text", "id": "alt", "label": "Alt text (optional)" },
+          { "type": "text", "id": "caption", "label": "Caption (optional)" }
+        ]
+      },
+      {
+        "type": "image",
+        "name": "Image",
+        "limit": 6,
+        "settings": [
+          { "type": "image_picker", "id": "image", "label": "Upload theme image" },
+          { "type": "url", "id": "image_url", "label": "OR paste image URL (Content → Files)" },
+          { "type": "text", "id": "alt", "label": "Alt text" },
+          { "type": "text", "id": "caption", "label": "Caption (optional)" }
+        ]
+      }
+    ],
+    "max_blocks": 6,
+    "presets": [{ "name": "EE • Grid (Custom)" }]
+  }
+  {% endschema %}
 </section>
