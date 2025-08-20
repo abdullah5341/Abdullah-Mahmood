@@ -71,7 +71,7 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
-    {{ 'ecomexperts.js' | asset_url | script_tag }}
+    <script src="{{ 'ecomexperts.js' | asset_url }}" defer></script>
     <script src="{{ 'ecomexperts.js' | asset_url }}" defer></script>
 
 
