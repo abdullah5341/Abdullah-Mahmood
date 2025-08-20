@@ -1,368 +1,173 @@
-/******************************************
-* EE — Desktop 22 (1440 × 2000)
-* Banner + 3×2 Grid
-******************************************/
-
-/* Fallbacks only; real URLs are injected inline by the section */
-.ee-banner{
-  --ee-frame-top: none;
-  --ee-frame-bottom: none;
-  --ee-arrow-top: none; /* Arrow1.svg */
-}
-
-/* ---------- Page frame (center at 1440) ---------- */
-.ee-banner,
-.ee-grid {
-  max-width: 1440px;
-  margin-inline: auto;
+/* =========================================================
+   GRID HOTSPOT (plus.svg)
+========================================================= */
+.ee-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 433/444;
+  overflow: hidden;
   background: #fff;
 }
+.ee-card__img,
+.ee-card__img img { display:block; width:100%; height:100%; }
+.ee-card__img img { object-fit: cover; object-position: center; }
 
-/* ======================================================================
-   BANNER
-====================================================================== */
-
-/* Top strip (Frame 1956) */
-.ee-banner__top {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 360px;                      /* brand ↔ center text ↔ CTA (Figma) */
-  padding: 10px 50px;
-  height: 64px;
-  background: #F5F5F5;
-}
-
-/* Left brand */
-.ee-banner__brand {
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 18px;                 /* Figma ≈19px box height */
-  letter-spacing: .02em;
-  color:#000;
-}
-
-/* Center tiny message — single line, no side rules */
-.ee-banner__strip {
-  width: auto;
-  white-space: nowrap;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1.2;
-  text-align: center;
-  color: #000;
-}
-.ee-banner__strip::before,
-.ee-banner__strip::after{
-  content: none; /* hide figma’s thin lines */
-}
-
-/* Right yellow CTA with SVG arrow */
-.ee-btn--top {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 207px;
-  height: 44px;
-  background: #FFF544;
+.ee-hotspot{
+  position: absolute;
+  top: 14px;          /* matches Figma placements visually */
+  right: 14px;
+  width: 46px;
+  height: 47px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(248,248,248,.9);
+  box-shadow: 0 6px 8px rgba(0,0,0,.2);
   border: 1px solid #000;
-  text-transform: uppercase;
+}
+.ee-hotspot img{ display:block; width: 22px; height: 22px; }
+
+/* =========================================================
+   QUICK VIEW MODAL (311×447 content pane per card)
+========================================================= */
+.ee-modal{ position: fixed; inset:0; z-index: 999; display:none; }
+.ee-modal.is-open{ display:block; }
+
+.ee-modal__backdrop{
+  position:absolute; inset:0;
+  background: rgba(0,0,0,.25);
+}
+
+.ee-modal__dialog{
+  position: absolute;
+  left:50%; top:50%;
+  transform: translate(-50%, -50%);
+  width: 586px;                /* image + info side-by-side ~ Figma proportion */
+  max-width: calc(100vw - 32px);
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.2);
+  padding: 18px;
+}
+
+.ee-modal__close{
+  position:absolute; right:12px; top:8px;
+  background:transparent; border:0; font-size:22px; line-height:1;
+  cursor:pointer;
+}
+
+.ee-modal__body{
+  display:grid;
+  grid-template-columns: 160px 1fr;   /* image + content */
+  gap: 18px;
+}
+
+.ee-modal__media{
+  width:160px; height:220px; border:1px solid #000; display:grid; place-items:center;
+}
+.ee-modal__img{ max-width:100%; max-height:100%; object-fit:cover; }
+
+.ee-modal__content{ min-width:0; }
+
+.ee-name{
   font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 16px;
-  line-height: 20px;
-  color:#000;
-  padding-right:56px;              /* space for arrow */
-}
-/* render Arrow1.svg in black on the right */
-.ee-btn--top::after{
-  content:"";
-  position:absolute;
-  right:16px;
-  top:50%;
-  transform: translateY(-50%);
-  width:25px;                      /* Figma arrow 25×~12 */
-  height:12px;
-  background-image: var(--ee-arrow-top);
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:contain;
-}
-
-/* Hero (Group 1000007949) */
-.ee-banner__hero {
-  position: relative;
-  height: 780px;                   /* exact per Figma */
-  overflow: hidden;
-}
-
-/* Optional background photo (if used). Keep beneath overlays. */
-.ee-banner__bg{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center top;
-  pointer-events:none;
-  z-index:-1;                      /* beneath overlays */
-}
-
-/* === SVG FRAME OVERLAYS (exact px sizes) === */
-.ee-banner__hero::before,
-.ee-banner__hero::after{
-  content:"";
-  position:absolute;
-  pointer-events:none;
-  background-repeat:no-repeat;
-  z-index:0;                       /* above bg image, below text */
-}
-
-/* Top overlay: 1440×390 anchored to hero top */
-.ee-banner__hero::before{
-  left:0; right:0; top:0;
-  height:390px;
-  background-image: var(--ee-frame-top);
-  background-position: center top;
-  background-size: 1440px 390px;
-}
-
-/* Bottom-right overlay: 890×402, right aligned, bottom */
-.ee-banner__hero::after{
-  right:0; bottom:0;
-  width:890px; height:402px;
-  background-image: var(--ee-frame-bottom);
-  background-position: right bottom;
-  background-size: 890px 402px;
-}
-
-/* Content block – positions to match Figma text coordinates */
-.ee-banner__content{
-  position: relative;
-  z-index: 1;                      /* above the SVG frames */
-  padding-left: 67px;              /* Figma “Left: 67px” */
-  padding-top: 425px;              /* 489 (title top) − 64 (top bar) */
-  max-width: 900px;
-}
-
-/* Title */
-.ee-banner__title{
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 70px;
-  line-height: 1;                  /* 100% */
-  margin: 0 0 24px;
+  line-height: 120%;
+  margin: 0 0 6px;
   color:#000;
 }
-
-/* Paragraph — width 483, 20/140% */
-.ee-banner__sub{
-  width: 483px;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 140%;
-  margin: 0;
+.ee-price{
+  font-family: 'Lustria', serif;
+  font-size: 16px;
+  line-height:120%;
+  margin-bottom: 12px;
   color:#000;
 }
+.ee-desc{
+  font-family:'Jost', system-ui, sans-serif;
+  font-weight:300; font-size:14px; line-height:110%;
+  letter-spacing:-.01em;
+  margin: 0 0 14px; color:#000;
+}
 
-/* Primary button — same Arrow1.svg, recolored white via mask */
-.ee-btn--primary{
-  position: relative;
-  display: inline-flex;
+/* ----- fields (Color + Size) ----- */
+.ee-field{ margin-bottom: 14px; }
+.ee-label{
+  display:block;
+  font-family:'Jost', system-ui, sans-serif;
+  font-size:14px; line-height:130%;
+  color:#333;
+  margin-bottom: 6px;
+}
+
+/* Color pills (Components 208..211) */
+.ee-color{
+  display:grid; grid-template-columns: 1fr 1fr; gap: 6px;
+}
+.ee-swatch{
+  display:grid; grid-template-columns: 32px 1fr;
   align-items:center;
-  justify-content:center;
-  width:220px;
-  height:50px;
-  margin-top: 76px;               /* aligns to ~743px overall y */
-  background:#000;
-  color:#fff;
+  border:.5px solid #000;
+  height: 36px;
+  position: relative;
+}
+.ee-swatch__box{
+  width:32px; height:100%;
+  border-right:.5px solid #000;
+}
+.ee-swatch__name{
+  padding:0 10px;
+  font-family:'Jost', system-ui, sans-serif;
+  font-size:18px; line-height:1; letter-spacing:-.02em;
+  text-transform:capitalize;
+}
+.ee-swatch.is-active{ outline:2px solid #000; }
+
+/* Size (Component 213 + dropdown 212) */
+.ee-size{ position:relative; }
+.ee-size__select{
+  width:100%; height:64px;
+  border:.5px solid #000; background:#fff;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 14px; font-family:'Jost', system-ui, sans-serif;
+}
+.ee-caret{ margin-left:10px; }
+.ee-size__menu{
+  position:absolute; left:0; right:0; top:64px; max-height:182px;
+  background:#fff; border:1px solid #000;
+  overflow:auto; display:none;
+}
+.ee-size__menu.is-open{ display:block; }
+.ee-size__opt{
+  height:36px; display:grid; place-items:center;
+  border-bottom:1px solid #000;
+  font-family:'Jost'; font-size:16px; letter-spacing:-.02em;
+}
+.ee-size__opt:last-child{ border-bottom:0; }
+.ee-size__opt.is-active{ background:#000; color:#fff; }
+
+/* Add to cart (Component 206/207 – black button with white arrow) */
+.ee-qv__add{
+  position:relative;
+  width:271px; height:45px;
+  background:#000; color:#fff; border:1px solid #000;
   text-transform:uppercase;
   font-family:'Jost', system-ui, sans-serif;
   font-size:16px;
-  border:1px solid #000;
-  padding-right:56px;              /* space for arrow */
+  padding-right:40px;
 }
-/* white arrow using mask so we can reuse the black SVG */
-.ee-btn--primary::after{
-  content:"";
-  position:absolute;
-  right:16px;
-  top:50%;
-  transform: translateY(-50%);
-  width:25px;
-  height:12px;
-  -webkit-mask-image: var(--ee-arrow-top);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-  mask-image: var(--ee-arrow-top);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-  background-color:#fff;          /* arrow color */
+.ee-qv__add::after{                /* arrow shaft */
+  content:""; position:absolute; right:24px; top:50%; width:28px; height:0;
+  border-top:1.5px solid #fff; transform:translateY(-50%);
 }
+.ee-qv__add::before{               /* arrow head (uses Arrow1.svg direction) */
+  content:""; position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  width:0;height:0;
+  border-left:7px solid #fff;
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
+}
+.ee-qv__add:disabled{ opacity:.5; cursor:not-allowed; }
 
-/* Bottom micro-strip (Frame 1957 slim) */
-.ee-banner__foot{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:10px 50px;
-  gap:375px;
-  height:34px;
-  background:#F5F5F5;
-  font-family:'Jost', system-ui, sans-serif;
-  font-weight:400;
-  font-size:16px;
-  line-height:13px;
-  text-align:center;
-  color:#000;
-}
-
-/* Total height = 64 + 780 + 34 */
-.ee-banner{
-  height:878px;
-  display:flex;
-  flex-direction:column;
-}
-
-/* ======================================================================
-   GRID (unchanged)
-====================================================================== */
-
-/* ---------- GRID LAYOUT ---------- */
-.ee-grid{ padding:90px 50px 120px; }
-.ee-grid__heading{
-  font-family:'Lustria', serif;
-  font-weight:400;
-  font-size:36px;
-  line-height:120%;
-  color:#000; margin:0 0 30px;
-}
-.ee-grid__wrap{
-  max-width:1339px; margin:0 auto;
-  display:grid; grid-template-columns:repeat(3,1fr);
-  gap:20px;
-}
-.ee-card{ position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; background:#fff; }
-.ee-card__img, .ee-card__img img{ display:block; width:100%; height:100%; }
-.ee-card__img img{ object-fit:cover; object-position:center; }
-
-/* Plus hotspot (top-right-ish like figma drop) */
-.ee-hotspot{
-  position:absolute; right:18px; top:18px; width:46px; height:46px;
-  border:none; padding:0; cursor:pointer; background:rgba(248,248,248,.9);
-  border-radius:999px; filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
-}
-.ee-hotspot::before{
-  content:""; position:absolute; inset:0; margin:auto; width:20px; height:20px;
-  background-image: var(--ee-plus); background-repeat:no-repeat; background-size:contain; background-position:center;
-}
-
-/* ---------- MODAL ---------- */
-.ee-modal[hidden]{ display:none; }
-.ee-modal{ position:fixed; inset:0; z-index:1100; }
-.ee-modal__backdrop{
-  position:absolute; inset:0; background:rgba(0,0,0,.2);
-}
-.ee-modal__dialog{
-  position:relative; max-width:586px; background:#fff; margin:10vh auto; padding:20px;
-  box-shadow:0 12px 32px rgba(0,0,0,.25);
-  font-family:'Jost', system-ui, sans-serif;
-}
-.ee-modal__close{
-  position:absolute; right:12px; top:8px; width:32px; height:32px;
-  border:none; background:transparent; font-size:22px; cursor:pointer;
-}
-.ee-modal__body{ display:flex; gap:16px; }
-.ee-modal__media{ width:120px; flex:0 0 120px; }
-.ee-modal__media img{ width:120px; height:120px; object-fit:cover; object-position:center; border:1px solid #000; }
-.ee-modal__info{ flex:1; }
-
-.ee-p-name{ font-weight:400; font-size:16px; margin:0 0 6px; }
-.ee-p-price{ font-family:'Lustria', serif; font-size:16px; line-height:1.2; margin-bottom:8px; }
-.ee-p-desc{ font-size:14px; line-height:1.1; margin:0 0 14px; max-width:260px; }
-
-.ee-field{ margin:14px 0; }
-.ee-field__label{ display:block; font-size:14px; color:#333; margin-bottom:6px; }
-
-/* Color buttons (two chips like the figma boxes) */
-.ee-color{ display:flex; gap:6px; }
-.ee-color button{
-  position:relative; min-width:94px; height:36px; border:.5px solid #000; background:#fff;
-  font-size:18px; text-transform:capitalize; letter-spacing:-.02em; cursor:pointer;
-}
-.ee-color button[data-active="true"]::after{ /* filled right box when active */
-  content:""; position:absolute; right:0; top:0; bottom:0; width:50%; background:#000;
-}
-.ee-color button span{ position:relative; z-index:1; color:#000; padding:0 10px; }
-
-/* Size select like figma rectangle with caret */
-.ee-size__select{ position:relative; }
-.ee-size select{
-  appearance:none; -webkit-appearance:none; width:271px; height:64px; border:.5px solid #000; padding:0 42px 0 18px;
-  font-size:16px; letter-spacing:-.02em; background:#fff;
-}
-.ee-caret{
-  position:absolute; right:12px; top:50%; width:12px; height:12px; transform:translateY(-50%) rotate(45deg);
-  border-right:1.5px solid #000; border-bottom:1.5px solid #000;
-}
-
-/* Primary button with white arrow (like “Add to cart” cards) */
-.ee-btn--primary{
-  position:relative; display:inline-flex; align-items:center; justify-content:center;
-  width:271px; height:45px; background:#000; color:#fff; border:1px solid #000;
-  text-transform:uppercase; font-size:16px; padding-right:40px; cursor:pointer;
-}
-.ee-btn--primary::after{ content:""; position:absolute; right:16px; width:28px; border-top:1.5px solid #fff; }
-.ee-btn--primary::before{
-  content:""; position:absolute; right:4px; top:50%; transform:translateY(-50%);
-  border-left:7px solid #fff; border-top:5px solid transparent; border-bottom:5px solid transparent;
-}
-
-.ee-status{ margin-top:10px; font-size:14px; min-height:18px; }
-
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 1100px){
-  .ee-grid__wrap{ grid-template-columns:repeat(2,1fr); }
-}
-@media (max-width: 700px){
-  .ee-grid{ padding:48px 16px 80px; }
-  .ee-grid__wrap{ grid-template-columns:1fr; }
-  .ee-modal__dialog{ margin:6vh 16px; }
-}
-
-
-/* ======================================================================
-   RESPONSIVE
-====================================================================== */
-
-@media (max-width: 1100px){
-  .ee-banner__content{ padding-top: 380px; }
-  .ee-banner__hero::before{ height:320px; background-size: 1440px 320px; }
-  .ee-banner__hero::after{ width:720px; height:360px; background-size:720px 360px; }
-  .ee-grid__wrap{ grid-template-columns:repeat(2,1fr); }
-}
-
-@media (max-width: 700px){
-  .ee-banner__top{ gap:24px; padding:8px 16px; }
-  .ee-banner__content{ padding: 240px 16px 0; }
-  .ee-banner__title{ font-size:46px; }
-  .ee-banner__sub{ width:auto; font-size:16px; }
-  .ee-btn--primary{ margin-top:32px; }
-  .ee-banner__foot{ padding:8px 16px; gap:24px; }
-
-  .ee-grid{ padding:48px 16px 0; }
-  .ee-grid__wrap{ grid-template-columns:1fr; }
-
-  .ee-banner__hero::before{ height:240px; background-size: 1440px 240px; }
-  .ee-banner__hero::after{
-    right:0; bottom:0; width:100%; height:auto; aspect-ratio: 890/402;
-    background-size: contain;
-  }
-}
+/* open/close helpers */
+html.ee-lock{ overflow:hidden; }
