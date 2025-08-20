@@ -8,19 +8,23 @@ Bottom micro strip
 <section class="ee-banner" id="ee-banner-{{ section.id }}">
 
   {%- comment -%}
-  Inject the real asset URLs as CSS variables so we don't rely on .css.liquid.
+  Inject real asset URLs as CSS variables (no .css.liquid needed).
   {%- endcomment -%}
   {% style %}
     #ee-banner-{{ section.id }}{
       --ee-frame-top: url({{ 'up.svg'   | asset_url }});
       --ee-frame-bottom: url({{ 'down.svg' | asset_url }});
+      --ee-arrow-top: url({{ 'Arrow1.svg' | asset_url }}); /* your exported arrow */
     }
   {% endstyle %}
 
   <!-- Top strip (Frame 1956) -->
   <div class="ee-banner__top">
     <div class="ee-banner__brand">{{ section.settings.brand | escape }}</div>
+
+    <!-- one-line center message (no side lines) -->
     <div class="ee-banner__strip">{{ section.settings.center_strip | escape }}</div>
+
     {% if section.settings.top_cta_label != blank %}
       <a
         class="ee-btn--top"
