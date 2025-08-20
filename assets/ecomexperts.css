@@ -1,15 +1,16 @@
 /******************************************
-* EE — Desktop 22 (1440 x 2000)
-* Banner + 3x2 Grid
-* Targets our custom sections:
-*   banner-ecomexperts.liquid
-*   grid-ecomexperts.liquid
+* EE — Desktop 22 (1440 × 2000)
+* Banner + 3×2 Grid (pixel-match to Figma)
+* Targets:
+*   sections/banner-ecomexperts.liquid
+*   sections/grid-ecomexperts.liquid
 ******************************************/
 
-/* Fallbacks (real URLs come from inline style in the .liquid) */
+/* ===== Assets (you already added /assets/bg.svg) ===== */
 :root{
-  --ee-frame-top: none;
-  --ee-frame-bottom: none;
+  /* Same art used twice per the design */
+  --ee-frame-top: url('{{ "bg.svg" | asset_url }}');     /* 1440 × ~390, sits at top of hero */
+  --ee-frame-bottom: url('{{ "bg.svg" | asset_url }}');  /* ~890 × 402, bottom-right cluster */
 }
 
 /* ---------- Page frame (center at 1440) ---------- */
@@ -24,109 +25,119 @@
    BANNER
 ====================================================================== */
 
-/* Top strip (Frame 1956) */
-.ee-banner__top {
+/* Container total height = 64 (top) + 780 (hero) + 34 (foot) = 878 */
+.ee-banner {
+  height: 878px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== Top strip — Frame 1956 ====================== */
+.ee-banner__top{
   position: relative;
   display: flex;
-  justify-content: center;         /* center the middle message */
+  flex-direction: row;
+  justify-content: center;              /* centers the middle message */
   align-items: center;
-  gap: 360px;                      /* left brand ↔ center text ↔ CTA gap */
+  gap: 360px;                           /* exact figma gap L ↔ C ↔ R */
   padding: 10px 50px;
   height: 64px;
   background: #F5F5F5;
 }
 
-/* Left brand (TISSO VISON) */
-.ee-banner__brand {
+/* Left brand “TISSO VISON” */
+.ee-banner__brand{
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 18px;                      /* fits 19px figma height */
   letter-spacing: .02em;
+  line-height: 19px;
   color:#000;
+  white-space: nowrap;
 }
 
-/* Center tiny message + thin lines */
-.ee-banner__strip {
+/* Center tiny message with thin lines left/right */
+.ee-banner__strip{
   position: relative;
-  width: 260px;
+  width: 260px;                         /* Figma width */
+  height: 14px;                         /* Figma height */
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 13px;
-  text-align: center;
-  color: #000;
+  line-height: 13px;                    /* Figma shows tight 13.42 */
+  color:#000;
+  text-align:center;
+  display:flex; align-items:center; justify-content:center;
 }
 .ee-banner__strip::before,
 .ee-banner__strip::after{
   content:"";
   position:absolute;
   top:50%;
-  width:110px;
+  width:110px;                          /* length of the hairlines */
   height:0;
-  border-top:1.5px solid #333;
-  transform: translateY(-50%);
+  border-top:1.5px solid #333333;       /* “Line 15” thickness */
+  transform:translateY(-50%);
 }
-.ee-banner__strip::before{ left:-130px; }
+.ee-banner__strip::before{ left:-130px; }   /* 110 line + 20 spacing */
 .ee-banner__strip::after { right:-130px; }
 
 /* Right yellow CTA with arrow */
-.ee-btn--top {
+.ee-btn--top{
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 207px;
   height: 44px;
-  background: #FFF544;
-  border: 1.5px solid #000;
-  text-transform: uppercase;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 20px;
+  background:#FFF544;
+  border:1.5px solid #000;
   color:#000;
-  padding-right:38px;              /* room for arrow */
+  text-transform:uppercase;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight:400;
+  font-size:16px;
+  line-height:20px;
+  padding-right:38px;                   /* space for arrow head */
+  white-space:nowrap;
 }
-.ee-btn--top::after {              /* arrow shaft */
-  content: "";
-  position: absolute;
-  right: 22px;
-  width: 28px;
-  height: 0;
-  border-top: 1.5px solid #000;
-}
-.ee-btn--top::before{              /* arrow head */
+.ee-btn--top::after{                    /* shaft */
   content:"";
   position:absolute;
-  right: 10px;
-  top:50%;
+  right:22px;
+  width:28px;
+  height:0;
+  border-top:1.5px solid #000;
+}
+.ee-btn--top::before{                   /* head */
+  content:"";
+  position:absolute;
+  right:10px; top:50%;
   transform:translateY(-50%);
-  width:0;height:0;
+  width:0; height:0;
   border-left:7px solid #000;
   border-top:5px solid transparent;
   border-bottom:5px solid transparent;
 }
 
-/* Hero art area (Group 1000007949) */
-.ee-banner__hero {
+/* ======================== Hero — 780px ========================= */
+.ee-banner__hero{
   position: relative;
-  height: 780px;                   /* Figma */
-  overflow: clip;
+  height:780px;
+  overflow:clip;                        /* crop like figma */
 }
 
-/* Background illustration (from section setting) — lowest visual layer */
-.ee-banner__bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  pointer-events: none;
-  z-index: 1;
+/* Background image (optional setting) */
+.ee-banner__bg{
+  position:absolute;
+  inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  object-position:center top;
+  pointer-events:none;
 }
 
-/* SVG FRAME OVERLAYS (above bg, below text) */
+/* SVG overlays — same file, 2 placements */
 .ee-banner__hero::before,
 .ee-banner__hero::after{
   content:"";
@@ -134,175 +145,158 @@
   pointer-events:none;
   background-repeat:no-repeat;
   background-size:contain;
-  z-index: 2;
+  z-index:0;                            /* behind text */
 }
-/* Top wide overlay (starts below the 64px bar visually) */
+
+/* Top wide frame: 1440 × 390, centered */
 .ee-banner__hero::before{
   left:0; right:0; top:0;
-  height:390px;                        /* visual height */
+  height:390px;                         /* visual height */
   background-image: var(--ee-frame-top);
-  background-position: center top;
+  background-position:center top;
 }
-/* Bottom-right cluster overlay */
+
+/* Bottom-right cluster: ~890 × 402, anchored to right/bottom */
 .ee-banner__hero::after{
-  width:890px; height:402px;           /* visual size of cluster */
+  width:890px; height:402px;
   right:0; bottom:0;
   background-image: var(--ee-frame-bottom);
-  background-position: right bottom;
+  background-position:right bottom;
 }
 
-/* Content positions (“The Gift Guide”) — topmost layer */
-.ee-banner__content {
-  position: relative;
-  padding-top: 330px;                  /* push content into hero */
-  padding-left: 67px;
-  max-width: 900px;
-  z-index: 3;
+/* Text block placement (The Gift Guide) */
+.ee-banner__content{
+  position:relative;
+  z-index:1;                            /* above overlays */
+  padding-top:330px;                    /* exact figma offset */
+  padding-left:67px;
+  max-width:900px;
 }
 
-/* Heading */
-.ee-banner__title {
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 500;
-  font-size: 70px;
-  line-height: 1.0;
-  color: #000;
-  margin: 0 0 24px;
+.ee-banner__title{
+  font-family:'Jost', system-ui, sans-serif;
+  font-weight:500;
+  font-size:70px;
+  line-height:1.0;                      /* 100% */
+  color:#000;
+  margin:0 0 24px;
 }
 
-/* Paragraph */
-.ee-banner__sub {
-  width: 483px;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 140%;
-  color: #000;
-  margin: 0 0 24px;
+.ee-banner__sub{
+  width:483px;                          /* lock to figma width */
+  font-family:'Jost', system-ui, sans-serif;
+  font-weight:400;
+  font-size:20px;
+  line-height:140%;
+  color:#000;
+  margin:0 0 24px;
 }
 
-/* Primary “Shop now” button */
-.ee-btn--primary {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 220px;
-  height: 50px;
-  background: #000;
-  color: #fff;
-  text-transform: uppercase;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-size: 16px;
-  border: 1.5px solid #000;
+/* Primary black CTA with white rule */
+.ee-btn--primary{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:220px; height:50px;
+  background:#000; color:#fff;
+  border:1.5px solid #000;
+  text-transform:uppercase;
+  font-family:'Jost', system-ui, sans-serif;
+  font-size:16px;
   padding-right:40px;
 }
-.ee-btn--primary::after {
-  content: "";
-  position: absolute;
-  right: 24px;
-  width: 28px;
-  height: 0;
-  border-top: 1.5px solid #fff;
+.ee-btn--primary::after{
+  content:"";
+  position:absolute;
+  right:24px;
+  width:28px; height:0;
+  border-top:1.5px solid #fff;
 }
 
-/* Bottom micro-strip */
-.ee-banner__foot {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 50px;
-  gap: 375px;
-  height: 34px;
-  background: #F5F5F5;
-  font-family: 'Jost', system-ui, sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 13px;
-  text-align: center;
-  color: #000;
-}
-
-/* Total banner height (64 + 780 + 34) */
-.ee-banner {
-  height: 878px;
-  display: flex;
-  flex-direction: column;
+/* =================== Bottom micro-strip — 34px ================== */
+.ee-banner__foot{
+  display:flex; justify-content:center; align-items:center;
+  padding:10px 50px;
+  gap:375px;
+  height:34px;
+  background:#F5F5F5;
+  font-family:'Jost', system-ui, sans-serif;
+  font-weight:400;
+  font-size:16px;
+  line-height:13px;
+  color:#000; text-align:center;
 }
 
 /* ======================================================================
    GRID (Tisso vison in the wild)
 ====================================================================== */
+.ee-grid{ padding:90px 50px 0; }
 
-.ee-grid { padding: 90px 50px 0; }
-
-.ee-grid__heading {
-  font-family: 'Lustria', serif;
-  font-weight: 400;
-  font-size: 36px;
-  line-height: 120%;
-  color: #000;
-  margin: 0 0 30px;
+.ee-grid__heading{
+  font-family:'Lustria', serif;
+  font-weight:400;
+  font-size:36px;
+  line-height:120%;
+  color:#000;
+  margin:0 0 30px;
 }
 
-.ee-grid__wrap {
-  max-width: 1339px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+.ee-grid__wrap{
+  max-width:1339px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:20px;
 }
 
-.ee-card { position: relative; width: 100%; aspect-ratio: 433 / 444; overflow: hidden; }
-.ee-card__img, .ee-card__img img { display:block; width:100%; height:100%; }
-.ee-card__img img { object-fit: cover; object-position: center; }
-.ee-card__title { position:absolute; inset:auto; clip:rect(0 0 0 0); width:1px; height:1px; overflow:hidden; }
-.ee-hotspot { display:none; }
+.ee-card{ position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; }
+.ee-card__img, .ee-card__img img{ display:block; width:100%; height:100%; }
+.ee-card__img img{ object-fit:cover; object-position:center; }
+.ee-card__title{ position:absolute; inset:auto; clip:rect(0 0 0 0); width:1px; height:1px; overflow:hidden; }
+.ee-hotspot{ display:none; }
 
 /* ======================================================================
    RESPONSIVE
 ====================================================================== */
-
-@media (max-width: 1100px) {
-  .ee-banner__content { padding-top: 280px; }
-  .ee-grid__wrap { grid-template-columns: repeat(2, 1fr); }
-  .ee-banner__hero::before{ height:320px; }
+@media (max-width:1100px){
+  .ee-banner__content{ padding-top:280px; }
+  .ee-grid__wrap{ grid-template-columns:repeat(2, 1fr); }
+  .ee-banner__hero::before{ height:320px; }      /* scale top art */
   .ee-banner__hero::after{ width:720px; height:360px; }
 }
 
-@media (max-width: 700px) {
-  .ee-banner__top { gap: 24px; padding: 8px 16px; }
+@media (max-width:700px){
+  .ee-banner__top{ gap:24px; padding:8px 16px; }
   .ee-banner__strip::before, .ee-banner__strip::after{ width:64px; }
-  .ee-banner__content { padding: 240px 16px 0; }
-  .ee-banner__title { font-size: 46px; }
-  .ee-banner__sub { width: auto; font-size: 16px; }
-  .ee-banner__foot { padding: 8px 16px; gap: 24px; }
-  .ee-grid { padding: 48px 16px 0; }
-  .ee-grid__wrap { grid-template-columns: 1fr; }
+  .ee-banner__content{ padding:240px 16px 0; }
+  .ee-banner__title{ font-size:46px; }
+  .ee-banner__sub{ width:auto; font-size:16px; }
+  .ee-banner__foot{ padding:8px 16px; gap:24px; }
+  .ee-grid{ padding:48px 16px 0; }
+  .ee-grid__wrap{ grid-template-columns:1fr; }
+
   .ee-banner__hero::before{ height:240px; }
-  .ee-banner__hero::after{ width:100%; height:auto; aspect-ratio: 890/402; }
+  .ee-banner__hero::after{
+    width:100%; height:auto; aspect-ratio:890/402;   /* keep shape */
+  }
 }
 
-/* Helpers */
+/* ===== Helpers & compatibility (safe to keep) ===== */
 .ee-card--empty .ee-card__placeholder{
-  width:100%;
-  aspect-ratio:1/1;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px dashed #ddd;
-  background:#f8f8f8;
-  color:#888;
-  font-size:14px;
+  width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+  border:2px dashed #ddd; background:#f8f8f8; color:#888; font-size:14px;
 }
-.ee-grid img { aspect-ratio: 1 / 1; object-fit: cover; width: 100%; height: auto; }
+.ee-grid img{ aspect-ratio:1/1; object-fit:cover; width:100%; height:auto; }
 
-/* Compatibility with earlier class names (no Liquid edits) */
-.ee-grid-section { max-width: 1440px; margin-inline: auto; padding: 90px 50px 0; }
-.ee-grid-section .ee-grid__title { font-family:'Lustria',serif; font-weight:400; font-size:36px; line-height:120%; color:#000; margin:0 0 30px; }
-.ee-grid-section .ee-grid__items {
-  max-width: 1339px; margin: 0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+/* Map older grid class names to the new layout without Liquid edits */
+.ee-grid-section{ max-width:1440px; margin-inline:auto; padding:90px 50px 0; }
+.ee-grid-section .ee-grid__title{
+  font-family:'Lustria', serif; font-weight:400; font-size:36px; line-height:120%; color:#000; margin:0 0 30px;
 }
-.ee-grid-section .ee-card { position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; }
-.ee-grid-section .ee-card__img, .ee-grid-section .ee-card__img img { width:100%; height:100%; display:block; }
-.ee-grid-section .ee-card__img img { object-fit:cover; object-position:center; }
+.ee-grid-section .ee-grid__items{
+  max-width:1339px; margin:0 auto; display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;
+}
+.ee-grid-section .ee-card{ position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; }
+.ee-grid-section .ee-card__img, .ee-grid-section .ee-card__img img{ width:100%; height:100%; display:block; }
+.ee-grid-section .ee-card__img img{ object-fit:cover; object-position:center; }
