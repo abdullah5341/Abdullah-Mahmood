@@ -1,9 +1,6 @@
 /******************************************
 * EE — Desktop 22 (1440 × 2000)
 * Banner + 3×2 Grid
-* Sections:
-*   banner-ecomexperts.liquid
-*   grid-ecomexperts.liquid
 ******************************************/
 
 /* ===== Link your exported SVGs from /assets ===== */
@@ -43,7 +40,7 @@
 .ee-banner__brand {
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
-  font-size: 18px;             /* Figma ~19px box height */
+  font-size: 18px;             /* Figma ≈19px box height */
   letter-spacing: .02em;
   color:#000;
 }
@@ -66,11 +63,11 @@
   top:50%;
   width:110px;
   height:0;
-  border-top:1.5px solid #333;
+  border-top:1px solid #000;
   transform: translateY(-50%);
 }
-.ee-banner__strip::before{ left:-130px; }
-.ee-banner__strip::after { right:-130px; }
+.ee-banner__strip::before{ right:100%; margin-right:20px; }
+.ee-banner__strip::after { left:100%;  margin-left:20px;  }
 
 /* Right yellow CTA with arrow */
 .ee-btn--top {
@@ -81,7 +78,7 @@
   width: 207px;
   height: 44px;
   background: #FFF544;
-  border: 1.5px solid #000;
+  border: 1px solid #000;
   text-transform: uppercase;
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
@@ -114,10 +111,10 @@
 .ee-banner__hero {
   position: relative;
   height: 780px;               /* Figma exactly */
-  overflow: clip;
+  overflow: hidden;
 }
 
-/* Optional background photo (if you add one in the section setting) */
+/* Optional background photo (if used). Keep beneath overlays. */
 .ee-banner__bg{
   position:absolute;
   inset:0;
@@ -126,7 +123,7 @@
   object-fit:cover;
   object-position:center top;
   pointer-events:none;
-  z-index:0;
+  z-index:-1;                  /* <-- keep below the SVG overlays */
 }
 
 /* === SVG FRAME OVERLAYS (exactly like Figma) === */
@@ -136,7 +133,7 @@
   position:absolute;
   pointer-events:none;
   background-repeat:no-repeat;
-  z-index:0;
+  z-index:0;                   /* above bg image, below text */
 }
 
 /* Top overlay: 1440×390 anchored to hero top */
@@ -157,16 +154,16 @@
   background-size: 890px 402px;    /* exact pixels; shows full art */
 }
 
-/* Content block – place exactly like Figma text positions */
+/* Content block – positions to match Figma text coordinates */
 .ee-banner__content{
   position: relative;
   z-index: 1;                      /* above the SVG frames */
-  padding-left: 67px;              /* Figma “Left 67px” */
-  padding-top: 425px;              /* Title top 489px − 64px top bar = 425 */
+  padding-left: 67px;              /* Figma “Left: 67px” */
+  padding-top: 425px;              /* 489 (title top) − 64 (top bar) */
   max-width: 900px;
 }
 
-/* Title (“The Gift Guide”) — 459×70 at top 489 (Figma) */
+/* Title (“The Gift Guide”) — 70px high, weight 500 */
 .ee-banner__title{
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
@@ -176,7 +173,7 @@
   color:#000;
 }
 
-/* Paragraph — width 483, top 609px (84px tall) */
+/* Paragraph — width 483, 20/140% like Figma */
 .ee-banner__sub{
   width: 483px;
   font-family: 'Jost', system-ui, sans-serif;
@@ -187,8 +184,7 @@
   color:#000;
 }
 
-/* Primary button — left 67px, top ~743px → 679 inside hero.
-   With the padding-top above, add margin-top to hit that y. */
+/* Primary button — add arrow head + shaft (white), & align */
 .ee-btn--primary{
   position: relative;
   display: inline-flex;
@@ -196,22 +192,33 @@
   justify-content:center;
   width:220px;
   height:50px;
-  margin-top: 76px;               /* 679 − (425 + title70 + 24 + para84) = 76 */
+  margin-top: 76px;               /* aligns to ~743px overall y */
   background:#000;
   color:#fff;
   text-transform:uppercase;
   font-family:'Jost', system-ui, sans-serif;
   font-size:16px;
-  border:1.5px solid #000;
+  border:1px solid #000;
   padding-right:40px;
 }
-.ee-btn--primary::after{
+.ee-btn--primary::after{          /* arrow shaft */
   content:"";
   position:absolute;
   right:24px;
   width:28px;
   height:0;
   border-top:1.5px solid #fff;
+}
+.ee-btn--primary::before{         /* arrow head */
+  content:"";
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;height:0;
+  border-left:7px solid #fff;
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
 }
 
 /* Bottom micro-strip (Frame 1957 slim) */
@@ -239,7 +246,7 @@
 }
 
 /* ======================================================================
-   GRID (kept from earlier)
+   GRID (same as before)
 ====================================================================== */
 
 .ee-grid{ padding:90px 50px 0; }
