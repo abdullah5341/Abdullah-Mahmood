@@ -44,10 +44,10 @@
   color:#000;
 }
 
-/* Center message — ONE LINE, no side rules */
+/* Center tiny message — single line, no side rules */
 .ee-banner__strip {
   width: auto;
-  white-space: nowrap;             /* keep text on a single line */
+  white-space: nowrap;
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
@@ -56,9 +56,11 @@
   color: #000;
 }
 .ee-banner__strip::before,
-.ee-banner__strip::after { content: none; }
+.ee-banner__strip::after{
+  content: none; /* hide figma’s thin lines */
+}
 
-/* Right yellow CTA with your Arrow1.svg */
+/* Right yellow CTA with SVG arrow */
 .ee-btn--top {
   position: relative;
   display: inline-flex;
@@ -74,13 +76,21 @@
   font-size: 16px;
   line-height: 20px;
   color:#000;
-
-  /* Arrow1.svg as a background icon */
-  padding-right:56px;                      /* space for arrow image */
+  padding-right:56px;              /* space for arrow */
+}
+/* render Arrow1.svg in black on the right */
+.ee-btn--top::after{
+  content:"";
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform: translateY(-50%);
+  width:25px;                      /* Figma arrow 25×~12 */
+  height:12px;
   background-image: var(--ee-arrow-top);
-  background-repeat: no-repeat;
-  background-position: right 14px center;  /* 14px from right edge */
-  background-size: 25px auto;              /* matches Figma export */
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
 }
 
 /* Hero (Group 1000007949) */
@@ -90,7 +100,7 @@
   overflow: hidden;
 }
 
-/* Optional background photo (below overlays) */
+/* Optional background photo (if used). Keep beneath overlays. */
 .ee-banner__bg{
   position:absolute;
   inset:0;
@@ -99,7 +109,7 @@
   object-fit:cover;
   object-position:center top;
   pointer-events:none;
-  z-index:-1;                      /* below overlays */
+  z-index:-1;                      /* beneath overlays */
 }
 
 /* === SVG FRAME OVERLAYS (exact px sizes) === */
@@ -160,7 +170,7 @@
   color:#000;
 }
 
-/* Primary button — now uses Arrow1.svg in white */
+/* Primary button — same Arrow1.svg, recolored white via mask */
 .ee-btn--primary{
   position: relative;
   display: inline-flex;
@@ -168,27 +178,34 @@
   justify-content:center;
   width:220px;
   height:50px;
-  margin-top: 76px;
+  margin-top: 76px;               /* aligns to ~743px overall y */
   background:#000;
   color:#fff;
   text-transform:uppercase;
   font-family:'Jost', system-ui, sans-serif;
   font-size:16px;
   border:1px solid #000;
-
-  /* arrow from Arrow1.svg, recolored white */
-  padding-right:56px; /* room for arrow */
+  padding-right:56px;              /* space for arrow */
+}
+/* white arrow using mask so we can reuse the black SVG */
+.ee-btn--primary::after{
+  content:"";
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform: translateY(-50%);
+  width:25px;
+  height:12px;
   -webkit-mask-image: var(--ee-arrow-top);
   -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: right 14px center;
-  -webkit-mask-size: 25px auto;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
   mask-image: var(--ee-arrow-top);
   mask-repeat: no-repeat;
-  mask-position: right 14px center;
-  mask-size: 25px auto;
-  background-color: #fff; /* arrow color */
+  mask-position: center;
+  mask-size: contain;
+  background-color:#fff;          /* arrow color */
 }
-
 
 /* Bottom micro-strip (Frame 1957 slim) */
 .ee-banner__foot{
