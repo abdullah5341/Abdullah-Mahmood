@@ -160,7 +160,7 @@
   color:#000;
 }
 
-/* Primary button — white arrow (CSS-drawn so it’s white on black) */
+/* Primary button — now uses Arrow1.svg in white */
 .ee-btn--primary{
   position: relative;
   display: inline-flex;
@@ -168,36 +168,27 @@
   justify-content:center;
   width:220px;
   height:50px;
-  margin-top: 76px;               /* aligns to ~743px overall y */
+  margin-top: 76px;
   background:#000;
   color:#fff;
   text-transform:uppercase;
   font-family:'Jost', system-ui, sans-serif;
   font-size:16px;
   border:1px solid #000;
-  padding-right:40px;
+
+  /* arrow from Arrow1.svg, recolored white */
+  padding-right:56px; /* room for arrow */
+  -webkit-mask-image: var(--ee-arrow-top);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: right 14px center;
+  -webkit-mask-size: 25px auto;
+  mask-image: var(--ee-arrow-top);
+  mask-repeat: no-repeat;
+  mask-position: right 14px center;
+  mask-size: 25px auto;
+  background-color: #fff; /* arrow color */
 }
-.ee-btn--primary::after{          /* shaft */
-  content:"";
-  position:absolute;
-  right:20px;
-  top:50%;
-  width:22px;
-  height:0;
-  border-top:1.5px solid #fff;
-  transform:translateY(-50%);
-}
-.ee-btn--primary::before{         /* arrow head */
-  content:"";
-  position:absolute;
-  right:8px;
-  top:50%;
-  transform:translateY(-50%);
-  width:0;height:0;
-  border-left:6px solid #fff;
-  border-top:4px solid transparent;
-  border-bottom:4px solid transparent;
-}
+
 
 /* Bottom micro-strip (Frame 1957 slim) */
 .ee-banner__foot{
