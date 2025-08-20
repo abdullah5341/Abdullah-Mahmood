@@ -6,11 +6,10 @@
 *   grid-ecomexperts.liquid
 ******************************************/
 
-/* ===== Use your uploaded assets (in /assets) ===== */
+/* Fallbacks (real URLs come from inline style in the .liquid) */
 :root{
-  /* Using the same bg.svg for both overlays. Replace with your own later if needed. */
-  --ee-frame-top: url('{{ "bg.svg" | asset_url }}');     /* 1440×~390 area at the top */
-  --ee-frame-bottom: url('{{ "bg.svg" | asset_url }}');  /* ~890×402 cluster bottom-right */
+  --ee-frame-top: none;
+  --ee-frame-bottom: none;
 }
 
 /* ---------- Page frame (center at 1440) ---------- */
@@ -115,7 +114,7 @@
   overflow: clip;
 }
 
-/* background illustration (from section setting) */
+/* Background illustration (from section setting) — lowest visual layer */
 .ee-banner__bg {
   position: absolute;
   inset: 0;
@@ -124,9 +123,10 @@
   object-fit: cover;
   object-position: center top;
   pointer-events: none;
+  z-index: 1;
 }
 
-/* SVG FRAME OVERLAYS */
+/* SVG FRAME OVERLAYS (above bg, below text) */
 .ee-banner__hero::before,
 .ee-banner__hero::after{
   content:"";
@@ -134,7 +134,7 @@
   pointer-events:none;
   background-repeat:no-repeat;
   background-size:contain;
-  z-index: 0;
+  z-index: 2;
 }
 /* Top wide overlay (starts below the 64px bar visually) */
 .ee-banner__hero::before{
@@ -151,13 +151,13 @@
   background-position: right bottom;
 }
 
-/* Content positions (“The Gift Guide”) */
+/* Content positions (“The Gift Guide”) — topmost layer */
 .ee-banner__content {
   position: relative;
   padding-top: 330px;                  /* push content into hero */
   padding-left: 67px;
   max-width: 900px;
-  z-index: 1;                          /* above overlays */
+  z-index: 3;
 }
 
 /* Heading */
@@ -280,9 +280,7 @@
   .ee-grid { padding: 48px 16px 0; }
   .ee-grid__wrap { grid-template-columns: 1fr; }
   .ee-banner__hero::before{ height:240px; }
-  .ee-banner__hero::after{
-    width:100%; height:auto; aspect-ratio: 890/402;
-  }
+  .ee-banner__hero::after{ width:100%; height:auto; aspect-ratio: 890/402; }
 }
 
 /* Helpers */
