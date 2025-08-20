@@ -1,16 +1,17 @@
 /******************************************
 * EE — Desktop 22 (1440 × 2000)
-* Banner + 3×2 Grid (pixel-match to Figma)
-* Targets:
-*   sections/banner-ecomexperts.liquid
-*   sections/grid-ecomexperts.liquid
+* Banner + 3×2 Grid
+* Sections:
+*   banner-ecomexperts.liquid
+*   grid-ecomexperts.liquid
 ******************************************/
 
-/* ===== Assets (you already added /assets/bg.svg) ===== */
+/* ===== Link your exported SVGs from /assets ===== */
 :root{
-  /* Same art used twice per the design */
-  --ee-frame-top: url('{{ "bg.svg" | asset_url }}');     /* 1440 × ~390, sits at top of hero */
-  --ee-frame-bottom: url('{{ "bg.svg" | asset_url }}');  /* ~890 × 402, bottom-right cluster */
+  /* Top frame: 1440×390 (starts right under the 64px top bar) */
+  --ee-frame-top: url('{{ "up.svg"   | asset_url }}');
+  /* Bottom-right frame: 890×402 (right aligned, bottom of hero) */
+  --ee-frame-bottom: url('{{ "down.svg" | asset_url }}');
 }
 
 /* ---------- Page frame (center at 1440) ---------- */
@@ -25,198 +26,199 @@
    BANNER
 ====================================================================== */
 
-/* Container total height = 64 (top) + 780 (hero) + 34 (foot) = 878 */
-.ee-banner {
-  height: 878px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ===================== Top strip — Frame 1956 ====================== */
-.ee-banner__top{
+/* Top strip (Frame 1956) */
+.ee-banner__top {
   position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: center;              /* centers the middle message */
+  justify-content: center;     /* center the middle message */
   align-items: center;
-  gap: 360px;                           /* exact figma gap L ↔ C ↔ R */
+  gap: 360px;                  /* brand ↔ center text ↔ CTA (Figma) */
   padding: 10px 50px;
   height: 64px;
   background: #F5F5F5;
 }
 
-/* Left brand “TISSO VISON” */
-.ee-banner__brand{
+/* Left brand */
+.ee-banner__brand {
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
-  font-size: 18px;                      /* fits 19px figma height */
+  font-size: 18px;             /* Figma ~19px box height */
   letter-spacing: .02em;
-  line-height: 19px;
   color:#000;
-  white-space: nowrap;
 }
 
-/* Center tiny message with thin lines left/right */
-.ee-banner__strip{
+/* Center tiny message + hairline dividers */
+.ee-banner__strip {
   position: relative;
-  width: 260px;                         /* Figma width */
-  height: 14px;                         /* Figma height */
+  width: 260px;                /* Figma width */
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 13px;                    /* Figma shows tight 13.42 */
-  color:#000;
-  text-align:center;
-  display:flex; align-items:center; justify-content:center;
+  line-height: 13px;           /* tight line-height like Figma (≈84%) */
+  text-align: center;
+  color: #000;
 }
 .ee-banner__strip::before,
 .ee-banner__strip::after{
   content:"";
   position:absolute;
   top:50%;
-  width:110px;                          /* length of the hairlines */
+  width:110px;
   height:0;
-  border-top:1.5px solid #333333;       /* “Line 15” thickness */
-  transform:translateY(-50%);
+  border-top:1.5px solid #333;
+  transform: translateY(-50%);
 }
-.ee-banner__strip::before{ left:-130px; }   /* 110 line + 20 spacing */
+.ee-banner__strip::before{ left:-130px; }
 .ee-banner__strip::after { right:-130px; }
 
 /* Right yellow CTA with arrow */
-.ee-btn--top{
+.ee-btn--top {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 207px;
   height: 44px;
-  background:#FFF544;
-  border:1.5px solid #000;
-  color:#000;
-  text-transform:uppercase;
+  background: #FFF544;
+  border: 1.5px solid #000;
+  text-transform: uppercase;
   font-family: 'Jost', system-ui, sans-serif;
-  font-weight:400;
-  font-size:16px;
-  line-height:20px;
-  padding-right:38px;                   /* space for arrow head */
-  white-space:nowrap;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color:#000;
+  padding-right:38px;          /* room for arrow */
 }
-.ee-btn--top::after{                    /* shaft */
+.ee-btn--top::after {          /* arrow shaft */
+  content: "";
+  position: absolute;
+  right: 22px;
+  width: 28px;
+  height: 0;
+  border-top: 1.5px solid #000;
+}
+.ee-btn--top::before{          /* arrow head */
   content:"";
   position:absolute;
-  right:22px;
-  width:28px;
-  height:0;
-  border-top:1.5px solid #000;
-}
-.ee-btn--top::before{                   /* head */
-  content:"";
-  position:absolute;
-  right:10px; top:50%;
+  right: 10px;
+  top:50%;
   transform:translateY(-50%);
-  width:0; height:0;
+  width:0;height:0;
   border-left:7px solid #000;
   border-top:5px solid transparent;
   border-bottom:5px solid transparent;
 }
 
-/* ======================== Hero — 780px ========================= */
-.ee-banner__hero{
+/* Hero (Group 1000007949) */
+.ee-banner__hero {
   position: relative;
-  height:780px;
-  overflow:clip;                        /* crop like figma */
+  height: 780px;               /* Figma exactly */
+  overflow: clip;
 }
 
-/* Background image (optional setting) */
+/* Optional background photo (if you add one in the section setting) */
 .ee-banner__bg{
   position:absolute;
   inset:0;
-  width:100%; height:100%;
+  width:100%;
+  height:100%;
   object-fit:cover;
   object-position:center top;
   pointer-events:none;
+  z-index:0;
 }
 
-/* SVG overlays — same file, 2 placements */
+/* === SVG FRAME OVERLAYS (exactly like Figma) === */
 .ee-banner__hero::before,
 .ee-banner__hero::after{
   content:"";
   position:absolute;
   pointer-events:none;
   background-repeat:no-repeat;
-  background-size:contain;
-  z-index:0;                            /* behind text */
+  z-index:0;
 }
 
-/* Top wide frame: 1440 × 390, centered */
+/* Top overlay: 1440×390 anchored to hero top */
 .ee-banner__hero::before{
   left:0; right:0; top:0;
-  height:390px;                         /* visual height */
+  height:390px;
   background-image: var(--ee-frame-top);
-  background-position:center top;
+  background-position: center top;
+  background-size: 1440px 390px;   /* render at exact pixels */
 }
 
-/* Bottom-right cluster: ~890 × 402, anchored to right/bottom */
+/* Bottom-right overlay: 890×402, right aligned, bottom */
 .ee-banner__hero::after{
-  width:890px; height:402px;
   right:0; bottom:0;
+  width:890px; height:402px;
   background-image: var(--ee-frame-bottom);
-  background-position:right bottom;
+  background-position: right bottom;
+  background-size: 890px 402px;    /* exact pixels; shows full art */
 }
 
-/* Text block placement (The Gift Guide) */
+/* Content block – place exactly like Figma text positions */
 .ee-banner__content{
-  position:relative;
-  z-index:1;                            /* above overlays */
-  padding-top:330px;                    /* exact figma offset */
-  padding-left:67px;
-  max-width:900px;
+  position: relative;
+  z-index: 1;                      /* above the SVG frames */
+  padding-left: 67px;              /* Figma “Left 67px” */
+  padding-top: 425px;              /* Title top 489px − 64px top bar = 425 */
+  max-width: 900px;
 }
 
+/* Title (“The Gift Guide”) — 459×70 at top 489 (Figma) */
 .ee-banner__title{
-  font-family:'Jost', system-ui, sans-serif;
-  font-weight:500;
-  font-size:70px;
-  line-height:1.0;                      /* 100% */
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 70px;
+  line-height: 1;                  /* 100% in Figma */
+  margin: 0 0 24px;
   color:#000;
-  margin:0 0 24px;
 }
 
+/* Paragraph — width 483, top 609px (84px tall) */
 .ee-banner__sub{
-  width:483px;                          /* lock to figma width */
-  font-family:'Jost', system-ui, sans-serif;
-  font-weight:400;
-  font-size:20px;
-  line-height:140%;
+  width: 483px;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 140%;
+  margin: 0;
   color:#000;
-  margin:0 0 24px;
 }
 
-/* Primary black CTA with white rule */
+/* Primary button — left 67px, top ~743px → 679 inside hero.
+   With the padding-top above, add margin-top to hit that y. */
 .ee-btn--primary{
-  position:relative;
-  display:inline-flex;
+  position: relative;
+  display: inline-flex;
   align-items:center;
   justify-content:center;
-  width:220px; height:50px;
-  background:#000; color:#fff;
-  border:1.5px solid #000;
+  width:220px;
+  height:50px;
+  margin-top: 76px;               /* 679 − (425 + title70 + 24 + para84) = 76 */
+  background:#000;
+  color:#fff;
   text-transform:uppercase;
   font-family:'Jost', system-ui, sans-serif;
   font-size:16px;
+  border:1.5px solid #000;
   padding-right:40px;
 }
 .ee-btn--primary::after{
   content:"";
   position:absolute;
   right:24px;
-  width:28px; height:0;
+  width:28px;
+  height:0;
   border-top:1.5px solid #fff;
 }
 
-/* =================== Bottom micro-strip — 34px ================== */
+/* Bottom micro-strip (Frame 1957 slim) */
 .ee-banner__foot{
-  display:flex; justify-content:center; align-items:center;
+  display:flex;
+  justify-content:center;
+  align-items:center;
   padding:10px 50px;
   gap:375px;
   height:34px;
@@ -225,12 +227,21 @@
   font-weight:400;
   font-size:16px;
   line-height:13px;
-  color:#000; text-align:center;
+  text-align:center;
+  color:#000;
+}
+
+/* Total height = 64 + 780 + 34 */
+.ee-banner{
+  height:878px;
+  display:flex;
+  flex-direction:column;
 }
 
 /* ======================================================================
-   GRID (Tisso vison in the wild)
+   GRID (kept from earlier)
 ====================================================================== */
+
 .ee-grid{ padding:90px 50px 0; }
 
 .ee-grid__heading{
@@ -246,7 +257,7 @@
   max-width:1339px;
   margin:0 auto;
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:20px;
 }
 
@@ -259,44 +270,51 @@
 /* ======================================================================
    RESPONSIVE
 ====================================================================== */
-@media (max-width:1100px){
-  .ee-banner__content{ padding-top:280px; }
-  .ee-grid__wrap{ grid-template-columns:repeat(2, 1fr); }
-  .ee-banner__hero::before{ height:320px; }      /* scale top art */
-  .ee-banner__hero::after{ width:720px; height:360px; }
+
+@media (max-width: 1100px){
+  .ee-banner__content{ padding-top: 380px; }
+  .ee-banner__hero::before{ height:320px; background-size: 1440px 320px; }
+  .ee-banner__hero::after{ width:720px; height:360px; background-size:720px 360px; }
+  .ee-grid__wrap{ grid-template-columns:repeat(2,1fr); }
 }
 
-@media (max-width:700px){
+@media (max-width: 700px){
   .ee-banner__top{ gap:24px; padding:8px 16px; }
   .ee-banner__strip::before, .ee-banner__strip::after{ width:64px; }
-  .ee-banner__content{ padding:240px 16px 0; }
+  .ee-banner__content{ padding: 240px 16px 0; }
   .ee-banner__title{ font-size:46px; }
   .ee-banner__sub{ width:auto; font-size:16px; }
+  .ee-btn--primary{ margin-top:32px; }
   .ee-banner__foot{ padding:8px 16px; gap:24px; }
+
   .ee-grid{ padding:48px 16px 0; }
   .ee-grid__wrap{ grid-template-columns:1fr; }
 
-  .ee-banner__hero::before{ height:240px; }
+  .ee-banner__hero::before{ height:240px; background-size: 1440px 240px; }
   .ee-banner__hero::after{
-    width:100%; height:auto; aspect-ratio:890/402;   /* keep shape */
+    right:0; bottom:0; width:100%; height:auto; aspect-ratio: 890/402;
+    background-size: contain;
   }
 }
 
-/* ===== Helpers & compatibility (safe to keep) ===== */
+/* Helpers */
 .ee-card--empty .ee-card__placeholder{
-  width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
-  border:2px dashed #ddd; background:#f8f8f8; color:#888; font-size:14px;
+  width:100%;
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px dashed #ddd;
+  background:#f8f8f8;
+  color:#888;
+  font-size:14px;
 }
 .ee-grid img{ aspect-ratio:1/1; object-fit:cover; width:100%; height:auto; }
 
-/* Map older grid class names to the new layout without Liquid edits */
+/* (Compat with previous class names – unchanged) */
 .ee-grid-section{ max-width:1440px; margin-inline:auto; padding:90px 50px 0; }
-.ee-grid-section .ee-grid__title{
-  font-family:'Lustria', serif; font-weight:400; font-size:36px; line-height:120%; color:#000; margin:0 0 30px;
-}
-.ee-grid-section .ee-grid__items{
-  max-width:1339px; margin:0 auto; display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;
-}
+.ee-grid-section .ee-grid__title{ font-family:'Lustria',serif; font-weight:400; font-size:36px; line-height:120%; color:#000; margin:0 0 30px; }
+.ee-grid-section .ee-grid__items{ max-width:1339px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
 .ee-grid-section .ee-card{ position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; }
 .ee-grid-section .ee-card__img, .ee-grid-section .ee-card__img img{ width:100%; height:100%; display:block; }
 .ee-grid-section .ee-card__img img{ object-fit:cover; object-position:center; }
