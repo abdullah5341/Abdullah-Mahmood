@@ -68,7 +68,6 @@
 .ee-banner__strip::after { left:100%;  margin-left:20px;  }
 
 /* Right yellow CTA with arrow */
-/* Top yellow button */
 .ee-btn--top {
   position: relative;
   display: inline-flex;
@@ -77,76 +76,34 @@
   width: 207px;
   height: 44px;
   background: #FFF544;
-  border: 1.5px solid #000;
+  border: 1px solid #000;
   text-transform: uppercase;
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
   color:#000;
-  padding-right:40px;          /* room for arrow */
+  padding-right:38px;              /* room for arrow */
 }
-.ee-btn--top::after {          /* shaft */
+.ee-btn--top::after {              /* arrow shaft */
   content: "";
   position: absolute;
-  right: 18px;
-  top: 50%;
-  width: 22px;
+  right: 22px;
+  width: 28px;
   height: 0;
   border-top: 1.5px solid #000;
-  transform: translateY(-50%);
 }
-.ee-btn--top::before {         /* arrow head */
+.ee-btn--top::before{              /* arrow head */
   content:"";
   position:absolute;
-  right: 8px;
+  right: 10px;
   top:50%;
   transform:translateY(-50%);
-  width:0; height:0;
-  border-left:6px solid #000;
-  border-top:4px solid transparent;
-  border-bottom:4px solid transparent;
+  width:0;height:0;
+  border-left:7px solid #000;
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
 }
-
-/* Black primary button */
-.ee-btn--primary {
-  position: relative;
-  display: inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:220px;
-  height:50px;
-  margin-top: 76px;
-  background:#000;
-  color:#fff;
-  text-transform:uppercase;
-  font-family:'Jost', system-ui, sans-serif;
-  font-size:16px;
-  border:1.5px solid #000;
-  padding-right:40px;
-}
-.ee-btn--primary::after {      /* shaft */
-  content:"";
-  position:absolute;
-  right: 18px;
-  top:50%;
-  width: 22px;
-  height: 0;
-  border-top:1.5px solid #fff;
-  transform:translateY(-50%);
-}
-.ee-btn--primary::before {     /* arrow head */
-  content:"";
-  position:absolute;
-  right: 8px;
-  top:50%;
-  transform:translateY(-50%);
-  width:0; height:0;
-  border-left:6px solid #fff;
-  border-top:4px solid transparent;
-  border-bottom:4px solid transparent;
-}
-
 
 /* Hero (Group 1000007949) */
 .ee-banner__hero {
