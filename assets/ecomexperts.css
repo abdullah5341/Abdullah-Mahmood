@@ -1,10 +1,18 @@
 /******************************************
 * EE — Desktop 22 (1440 x 2000)
 * Banner + 3x2 Grid
-* Only targets our custom sections:
+* Targets our custom sections:
 *   banner-ecomexperts.liquid
 *   grid-ecomexperts.liquid
 ******************************************/
+
+/* ====== SET THESE (once) to your uploaded assets ====== */
+:root{
+  /* Top wide SVG frame (1440×390) */
+  --ee-frame-top: url('...frame.png');      /* e.g. https://cdn.shopify.com/s/files/.../frame-top.svg */
+  /* Bottom-right SVG frame (890×402) */
+  --ee-frame-bottom: url('...frame.png');/* e.g. https://cdn.shopify.com/s/files/.../frame-bottom.svg */
+}
 
 /* ---------- Page frame (center at 1440) ---------- */
 .ee-banner,
@@ -20,6 +28,7 @@
 
 /* Top strip (Frame 1956) */
 .ee-banner__top {
+  position: relative;
   display: flex;
   justify-content: center;     /* center the middle message */
   align-items: center;
@@ -29,46 +38,39 @@
   background: #F5F5F5;
 }
 
-/* Left brand (TISSO / VISON stacked) */
+/* Left brand (TISSO VISON) */
 .ee-banner__brand {
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
   font-size: 18px;             /* fits figma height ~19px */
-  letter-spacing: .06em;
-  line-height: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  letter-spacing: .02em;
 }
 
-/* Center tiny message with hairlines left/right */
+/* Center tiny message + divider lines */
 .ee-banner__strip {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  min-width: 260px;            /* matches figma minimum */
-  padding: 0 12px;
+  width: 260px;                /* matches figma */
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 13px;
+  line-height: 13px;           /* figma shows tight line height */
   text-align: center;
   color: #000;
 }
 .ee-banner__strip::before,
-.ee-banner__strip::after {
-  content: "";
-  display: block;
-  height: 0;
-  border-top: 1px solid #000;  /* thin line */
-  opacity: .75;
-  flex: 1 1 140px;
-  translate: 0 -1px;
+.ee-banner__strip::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:110px;                 /* visual length of the thin lines */
+  height:0;
+  border-top:1.5px solid #333;
+  transform: translateY(-50%);
 }
+.ee-banner__strip::before{ left:-130px; }
+.ee-banner__strip::after { right:-130px; }
 
-/* Right yellow CTA (CHOOSE GIFT with line + arrow head) */
+/* Right yellow CTA */
 .ee-btn--top {
   position: relative;
   display: inline-flex;
@@ -83,27 +85,29 @@
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
-  padding-inline: 22px 46px;   /* room for arrow head */
-  overflow: visible;
+  color:#000;
+  padding-right:38px;          /* room for arrow head */
 }
-.ee-btn--top::after {          /* tail line (figma “Line 15”) */
+/* arrow shaft */
+.ee-btn--top::after {
   content: "";
   position: absolute;
-  right: 16px;
-  width: 25px;
+  right: 22px;
+  width: 28px;
   height: 0;
   border-top: 1.5px solid #000;
 }
-.ee-btn--top::before {         /* arrow head */
-  content: "";
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  width: 8px;
-  height: 8px;
-  border-right: 1.5px solid #000;
-  border-top: 1.5px solid #000;
-  transform: translateY(-50%) rotate(45deg);
+/* arrow head (small triangle) */
+.ee-btn--top::before{
+  content:"";
+  position:absolute;
+  right: 10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;height:0;
+  border-left:7px solid #000;      /* color */
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
 }
 
 /* Hero art area (Group 1000007949) */
@@ -113,7 +117,7 @@
   overflow: clip;
 }
 
-/* background illustration image */
+/* background illustration image (from section setting) */
 .ee-banner__bg {
   position: absolute;
   inset: 0;
@@ -124,12 +128,38 @@
   pointer-events: none;
 }
 
+/* --- SVG FRAME OVERLAYS (top strip + bottom-right cluster) --- */
+.ee-banner__hero::before,
+.ee-banner__hero::after{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  background-repeat:no-repeat;
+  background-size:contain;
+}
+/* Top wide frame (1440×390) pinned to the top (starts under the 64px bar) */
+.ee-banner__hero::before{
+  left:0; top:0; right:0;
+  height:390px;
+  background-image: var(--ee-frame-top);
+  background-position: center top;
+}
+/* Bottom-right cluster (≈890×402) aligned to right bottom area */
+.ee-banner__hero::after{
+  width:890px; height:402px;
+  right:0; bottom:0;
+  background-image: var(--ee-frame-bottom);
+  background-position: right bottom;
+}
+
 /* Content block positions to match figma “The Gift Guide” */
 .ee-banner__content {
   position: relative;
+  /* these paddings place text approximately where figma shows it: */
   padding-top: 330px;          /* push down into the hero */
   padding-left: 67px;
   max-width: 900px;
+  z-index: 1;                  /* sit above the frames */
 }
 
 /* Main heading */
@@ -167,6 +197,7 @@
   font-family: 'Jost', system-ui, sans-serif;
   font-size: 16px;
   border: 1.5px solid #000;
+  padding-right:40px;          /* keep white arrow clear */
 }
 .ee-btn--primary::after {      /* white arrow line */
   content: "";
@@ -192,7 +223,6 @@
   line-height: 13px;
   text-align: center;
   color: #000;
-  letter-spacing: .02em;
 }
 
 /* Make the whole banner 878px height (64 top + 780 hero + 34 bottom) */
@@ -258,20 +288,48 @@
 /* Quick-view hotspot placeholder – hide for now (we’ll enable next step) */
 .ee-hotspot { display: none; }
 
-/* Empty-state helper (if any slot missing an image) */
-.ee-card--empty .ee-card__placeholder {
-  width: 100%;
-  aspect-ratio: 1/1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed #ddd;
-  background: #f8f8f8;
-  color: #888;
-  font-size: 14px;
+/* ======================================================================
+   RESPONSIVE (simple)
+====================================================================== */
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .ee-banner__content { padding-top: 280px; }
+  .ee-grid__wrap { grid-template-columns: repeat(2, 1fr); }
+  /* scale/contain frames a bit tighter on smaller screens */
+  .ee-banner__hero::before{ height:320px; }
+  .ee-banner__hero::after{ width:720px; height:360px; }
 }
 
-/* Ensure square crop for any images directly in the grid wrapper */
+/* Mobile */
+@media (max-width: 700px) {
+  .ee-banner__top { gap: 24px; padding: 8px 16px; }
+  .ee-banner__strip::before, .ee-banner__strip::after{ width:64px; left:auto; right:auto; }
+  .ee-banner__content { padding: 240px 16px 0; }
+  .ee-banner__title { font-size: 46px; }
+  .ee-banner__sub { width: auto; font-size: 16px; }
+  .ee-banner__foot { padding: 8px 16px; gap: 24px; }
+  .ee-grid { padding: 48px 16px 0; }
+  .ee-grid__wrap { grid-template-columns: 1fr; }
+  /* tighten frames */
+  .ee-banner__hero::before{ height:240px; }
+  .ee-banner__hero::after{ width:100%; height:auto; aspect-ratio: 890/402; }
+}
+
+/* Empty state helper (if any card is not filled) */
+.ee-card--empty .ee-card__placeholder{
+  width:100%;
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px dashed #ddd;
+  background:#f8f8f8;
+  color:#888;
+  font-size:14px;
+}
+
+/* Images inside grid items (safety) */
 .ee-grid img {
   aspect-ratio: 1 / 1;
   object-fit: cover;
@@ -284,8 +342,7 @@
 .ee-grid-section { max-width: 1440px; margin-inline: auto; }
 .ee-grid-section { padding: 90px 50px 0; }
 .ee-grid-section .ee-grid__title {
-  font-family: 'Lustria', serif; font-weight: 400; font-size: 36px; line-height: 120%;
-  color: #000; margin: 0 0 30px;
+  font-family: 'Lustria', serif; font-weight: 400; font-size: 36px; line-height: 120%; color: #000; margin: 0 0 30px;
 }
 /* Map items→wrap so layout snaps without changing markup */
 .ee-grid-section .ee-grid__items {
@@ -300,24 +357,3 @@
 .ee-grid-section .ee-card__img,
 .ee-grid-section .ee-card__img img { width: 100%; height: 100%; display: block; }
 .ee-grid-section .ee-card__img img { object-fit: cover; object-position: center; }
-
-/* ======================================================================
-   RESPONSIVE (simple)
-====================================================================== */
-
-/* Tablet */
-@media (max-width: 1100px) {
-  .ee-banner__content { padding-top: 280px; }
-  .ee-grid__wrap { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* Mobile */
-@media (max-width: 700px) {
-  .ee-banner__top { gap: 24px; padding: 8px 16px; }
-  .ee-banner__content { padding: 240px 16px 0; }
-  .ee-banner__title { font-size: 46px; }
-  .ee-banner__sub { width: auto; font-size: 16px; }
-  .ee-banner__foot { padding: 8px 16px; gap: 24px; }
-  .ee-grid { padding: 48px 16px 0; }
-  .ee-grid__wrap { grid-template-columns: 1fr; }
-}
