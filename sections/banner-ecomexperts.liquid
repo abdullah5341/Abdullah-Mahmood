@@ -8,7 +8,7 @@ Matches classes used in ecomexperts.css
 
 <section class="ee-banner" id="ee-banner-{{ section.id }}">
 
-  <!-- Top strip -->
+  <!-- Top strip (Frame 1956) -->
   <div class="ee-banner__top">
     <div class="ee-banner__brand">{{ section.settings.brand | escape }}</div>
     <div class="ee-banner__strip">{{ section.settings.center_strip | escape }}</div>
@@ -22,20 +22,8 @@ Matches classes used in ecomexperts.css
     {% endif %}
   </div>
 
-  <!-- Hero -->
-  {%- comment -%}
-    IMPORTANT: Set CSS variables here in Liquid so the asset URLs resolve.
-    Currently using the same bg.svg for both the top and bottom overlays.
-    If you later upload different files (e.g. frame-top.svg / frame-bottom.svg),
-    just replace the filenames below.
-  {%- endcomment -%}
-  <div
-    class="ee-banner__hero"
-    style="
-      --ee-frame-top: url({{ 'bg.svg' | asset_url }});
-      --ee-frame-bottom: url({{ 'bg.svg' | asset_url }});
-    "
-  >
+  <!-- Hero (Group 1000007949; 780px high) -->
+  <div class="ee-banner__hero">
     {% if section.settings.bg_image %}
       {{ section.settings.bg_image
         | image_url: width: 2880
