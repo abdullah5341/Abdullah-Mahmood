@@ -8,7 +8,7 @@
   /* Top frame: 1440×390 (starts right under the 64px top bar) */
   --ee-frame-top: url('{{ "bg.svg"   | asset_url }}');
   /* Bottom-right frame: 890×402 (right aligned, bottom of hero) */
-  --ee-frame-bottom: url('{{ "down.svg" | asset_url }}');
+  --ee-frame-bottom: url('{{ "bg.svg" | asset_url }}');
 }
 
 /* ---------- Page frame (center at 1440) ---------- */
