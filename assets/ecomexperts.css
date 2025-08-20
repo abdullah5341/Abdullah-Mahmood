@@ -45,18 +45,18 @@
 
 /* Center tiny message + hairline dividers */
 .ee-banner__strip {
-  position: relative;
-  width: 260px;                    /* Figma width */
+  width: auto;                   /* no fixed 260px */
+  white-space: nowrap;           /* keep text in one line */
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 13px;               /* tight like Figma (≈84%) */
+  line-height: 1.2;
   text-align: center;
   color: #000;
 }
 .ee-banner__strip::before,
 .ee-banner__strip::after{
-  content:"";
+  content:none;
   position:absolute;
   top:50%;
   width:110px;
