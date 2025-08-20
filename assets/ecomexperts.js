@@ -1,238 +1,213 @@
-(function(){
-  const root = document.currentScript?.closest('[id^="ee-grid-"]') || document;
-  const modal = root.querySelector('[data-modal]');
-  if(!modal) return;
+/* ===================================================================
+   Ecomexperts – Quick View modal logic (no jQuery)
+=================================================================== */
+(function () {
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
 
-  const els = {
-    image: modal.querySelector('[data-media]'),
-    title: modal.querySelector('[data-title]'),
-    price: modal.querySelector('[data-price]'),
-    desc: modal.querySelector('[data-desc]'),
-    colorWrap: modal.querySelector('[data-color-wrap]'),
-    color: modal.querySelector('[data-color]'),
-    sizeWrap: modal.querySelector('[data-size-wrap]'),
-    size: modal.querySelector('[data-size]'),
-    add: modal.querySelector('[data-add]'),
-    status: modal.querySelector('[data-status]')
-  };
+  const modal = $('.ee-modal');
+  if (!modal) return;
 
-  let product = null;
-  let selection = {}; // { Color: 'Black', Size: 'M', ... }
-  let variants = [];
+  const dialog = $('.ee-modal__dialog', modal);
+  const imgEl  = $('.ee-modal__img', modal);
+  const nameEl = $('.ee-name', modal);
+  const priceEl= $('.ee-price', modal);
+  const descEl = $('.ee-desc', modal);
+  const colorWrap = $('[data-color-wrap]', modal);
+  const colorBox  = $('.ee-color', modal);
+  const sizeWrap  = $('[data-size-wrap]', modal);
+  const sizeBtn   = $('.ee-size__select', modal);
+  const sizeText  = $('.ee-size__text', modal);
+  const sizeMenu  = $('.ee-size__menu', modal);
+  const addBtn    = $('[data-add]', modal);
 
-  // Helpers
-  const money = (cents) => {
-    try { return new Intl.NumberFormat(undefined, { style:'currency', currency: Shopify.currency.active }).format(cents/100); }
-    catch { return (cents/100).toFixed(2); }
-  };
-  const norm = s => (s||"").toString().trim().toLowerCase();
+  // Handle for the product that should be auto-added for Black + Medium
+  const BONUS_HANDLE = 'soft-winter-jacket';  // change if your handle differs
 
-  function findVariant(){
-    if(!variants.length) return null;
-    // Compare each variant options against selection (by option order)
-    return variants.find(v => {
-      return v.options.every((val, i) => {
-        const optName = (product.options[i] && product.options[i].name) || "";
-        const sel = selection[optName] || selection[`option${i+1}`];
-        return norm(val) === norm(sel);
-      });
+  let productData = null;           // /products/{handle}.js
+  let selectedColor = null;
+  let selectedSize  = null;
+
+  function openModal() {
+    modal.classList.add('is-open');
+    document.documentElement.classList.add('ee-lock');
+    sizeMenu.classList.remove('is-open');
+    sizeBtn.setAttribute('aria-expanded', 'false');
+  }
+  function closeModal() {
+    modal.classList.remove('is-open');
+    document.documentElement.classList.remove('ee-lock');
+    productData = null;
+    selectedColor = selectedSize = null;
+    addBtn.disabled = true;
+    colorBox.innerHTML = '';
+    sizeMenu.innerHTML = '';
+    sizeText.textContent = 'Choose your size';
+  }
+
+  modal.addEventListener('click', (e)=>{
+    if (e.target.hasAttribute('data-close')) closeModal();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+
+  // Toggle size dropdown
+  sizeBtn.addEventListener('click', ()=>{
+    const open = sizeMenu.classList.toggle('is-open');
+    sizeBtn.setAttribute('aria-expanded', String(open));
+  });
+
+  // Hotspots
+  $$('.ee-card .ee-hotspot').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const card = btn.closest('.ee-card');
+      const handle = card.getAttribute('data-handle');
+
+      // Prefill from card
+      imgEl.src = card.getAttribute('data-featured');
+      imgEl.alt = card.getAttribute('data-title');
+      nameEl.textContent = card.getAttribute('data-title');
+      priceEl.textContent = card.getAttribute('data-price');
+      descEl.textContent  = card.getAttribute('data-desc');
+
+      // Fetch full product JSON for options/variants
+      try{
+        const res = await fetch(`/products/${handle}.js`);
+        productData = await res.json();
+      }catch(err){
+        console.error('Failed to fetch product JSON', err);
+        return openModal();
+      }
+
+      // Render Color pills (supports option name "Color")
+      const colorOpt = productData.options.find(o => /color/i.test(o.name));
+      if (colorOpt && colorOpt.values && colorOpt.values.length){
+        colorWrap.hidden = false;
+        colorBox.innerHTML = '';
+        // Figma shows 2 pills; we’ll render all, but keep same style
+        colorOpt.values.forEach((val, i)=>{
+          const sw = document.createElement('button');
+          sw.type = 'button';
+          sw.className = 'ee-swatch';
+          sw.setAttribute('data-color', val);
+
+          const box = document.createElement('span');
+          box.className = 'ee-swatch__box';
+          // simple color fill when recognizable:
+          const cssColor = val.toLowerCase();
+          if (['black','white','red','blue','grey','gray','green'].includes(cssColor)){
+            box.style.background = cssColor === 'grey' ? 'gray' : cssColor;
+          }
+          const label = document.createElement('span');
+          label.className = 'ee-swatch__name';
+          label.textContent = val;
+
+          sw.append(box, label);
+          colorBox.append(sw);
+
+          sw.addEventListener('click', ()=>{
+            selectedColor = val;
+            $$('.ee-swatch', colorBox).forEach(s=>s.classList.remove('is-active'));
+            sw.classList.add('is-active');
+            syncAddState();
+          });
+        });
+      }else{
+        colorWrap.hidden = true;
+        selectedColor = null;
+      }
+
+      // Render Size list (supports option name "Size")
+      const sizeOpt = productData.options.find(o => /size/i.test(o.name));
+      if (sizeOpt && sizeOpt.values && sizeOpt.values.length){
+        sizeWrap.hidden = false;
+        sizeMenu.innerHTML = '';
+        sizeOpt.values.forEach(val=>{
+          const opt = document.createElement('button');
+          opt.type = 'button';
+          opt.className = 'ee-size__opt';
+          opt.textContent = val;
+          opt.addEventListener('click', ()=>{
+            selectedSize = val;
+            sizeText.textContent = val;
+            $$('.ee-size__opt', sizeMenu).forEach(o=>o.classList.remove('is-active'));
+            opt.classList.add('is-active');
+            sizeMenu.classList.remove('is-open');
+            sizeBtn.setAttribute('aria-expanded','false');
+            syncAddState();
+          });
+          sizeMenu.append(opt);
+        });
+      }else{
+        sizeWrap.hidden = true;
+        selectedSize = null;
+      }
+
+      openModal();
+      syncAddState();
+    });
+  });
+
+  function syncAddState(){
+    // enable button if we can resolve a variant with current selections
+    if (!productData) { addBtn.disabled = true; return; }
+    const variant = resolveVariant();
+    addBtn.disabled = !variant;
+  }
+
+  function resolveVariant(){
+    // Matches variant by options. Works whether product has Color/Size or different names.
+    return productData.variants.find(v=>{
+      let ok = true;
+      if (selectedColor){
+        ok = ok && [v.option1, v.option2, v.option3].some(o => (o||'').toLowerCase() === selectedColor.toLowerCase());
+      }
+      if (selectedSize){
+        ok = ok && [v.option1, v.option2, v.option3].some(o => (o||'').toLowerCase() === selectedSize.toLowerCase());
+      }
+      return ok;
     }) || null;
   }
 
-  function renderOptions(){
-    // Clear
-    els.color.innerHTML = '';
-    els.size.innerHTML = '';
-    els.colorWrap.hidden = true;
-    els.sizeWrap.hidden = true;
-
-    // Figma-style: treat "Color" as buttons, "Size" as select; others become selects.
-    const options = product.options || [];
-
-    options.forEach((opt, idx) => {
-      const values = [...new Set(opt.values)];
-      const optName = opt.name;
-
-      if (norm(optName) === 'color') {
-        els.colorWrap.hidden = false;
-        values.forEach(val => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.innerHTML = `<span>${val}</span>`;
-          btn.dataset.value = val;
-          btn.addEventListener('click', () => {
-            selection[optName] = val;
-            // mark active
-            [...els.color.children].forEach(b => b.dataset.active = (b.dataset.value === val) ? 'true' : 'false');
-          });
-          els.color.appendChild(btn);
-        });
-        // preselect
-        selection[optName] = selection[optName] || values[0];
-        // mark active
-        [...els.color.children].forEach(b => b.dataset.active = (b.dataset.value === selection[optName]) ? 'true' : 'false');
-      } else if (norm(optName) === 'size') {
-        els.sizeWrap.hidden = false;
-        const sel = els.size;
-        sel.innerHTML = '';
-        values.forEach(v => {
-          const o = document.createElement('option');
-          o.value = v; o.textContent = v;
-          sel.appendChild(o);
-        });
-        selection[optName] = selection[optName] || values[0];
-        sel.value = selection[optName];
-        sel.addEventListener('change', () => (selection[optName] = sel.value));
-      } else {
-        // Generic select (rare here, but future-proof)
-        const wrap = document.createElement('div');
-        wrap.className = 'ee-field';
-        wrap.innerHTML = `<label class="ee-field__label">${optName}</label>
-          <div class="ee-size"><div class="ee-size__select">
-            <select data-generic="${optName}"></select><span class="ee-caret"></span>
-          </div></div>`;
-        modal.querySelector('.ee-modal__info').insertBefore(wrap, els.add);
-
-        const sel = wrap.querySelector('select');
-        values.forEach(v => {
-          const o = document.createElement('option');
-          o.value = v; o.textContent = v; sel.appendChild(o);
-        });
-        selection[optName] = selection[optName] || values[0];
-        sel.value = selection[optName];
-        sel.addEventListener('change', () => (selection[optName] = sel.value));
-      }
-    });
-  }
-
-  function populateFromBlock(blockId){
-    const jsonTag = root.querySelector('#ee-product-json-' + blockId);
-    if(!jsonTag) return;
-    const data = JSON.parse(jsonTag.textContent);
-
-    product = {
-      id: data.id,
-      title: data.title,
-      handle: data.handle,
-      url: data.url,
-      description: data.description,
-      price: data.price,
-      options: data.options || [],
-      images: data.images || []
-    };
-    variants = data.variants || [];
-    selection = {};
-
-    // Media, title, price, desc
-    els.image.src = product.images[0] || '';
-    els.title.textContent = product.title;
-    els.price.textContent = data.price_formatted || money(product.price);
-    els.desc.textContent = product.description || '';
-
-    // Render options
-    renderOptions();
-  }
-
-  // Open/Close
-  function open(blockId){
-    populateFromBlock(blockId);
-    modal.hidden = false;
-    document.documentElement.style.overflow = 'hidden';
-    els.status.textContent = '';
-  }
-  function close(){
-    modal.hidden = true;
-    document.documentElement.style.overflow = '';
-    els.status.textContent = '';
-    // cleanup generic selects we injected
-    modal.querySelectorAll('[data-generic]').forEach(n => {
-      const field = n.closest('.ee-field'); field?.remove();
-    });
-  }
-  modal.addEventListener('click', e => {
-    if (e.target.matches('[data-close], .ee-modal__backdrop')) close();
-  });
-  document.addEventListener('keydown', e => { if(!modal.hidden && e.key === 'Escape') close(); });
-
-  // Hotspot triggers
-  root.addEventListener('click', e => {
-    const btn = e.target.closest('[data-open-quick]');
-    if(!btn) return;
-    e.preventDefault();
-    open(btn.dataset.blockId);
-  });
-
-  // Add to cart (with optional bonus rule)
   async function addToCart(variantId, qty=1){
-    const r = await fetch('/cart/add.js', {
+    const res = await fetch('/cart/add.js', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({ id: variantId, quantity: qty })
     });
-    if(!r.ok) throw new Error('Add failed');
-    return r.json();
+    if (!res.ok) throw new Error('add.js failed');
+    return res.json();
   }
 
-  async function maybeAddBonus() {
-    const cfgEl = root.closest('section.ee-grid-section');
-    if(!cfgEl) return;
-    // Pull section settings from DOM dataset (not exposed by Liquid automatically),
-    // so we’ll embed hidden inputs for rules:
+  async function addBonusIfNeeded(){
+    if (!(selectedColor && selectedSize)) return;
+    if (selectedColor.toLowerCase() !== 'black') return;
+    if (selectedSize.toLowerCase() !== 'm') return;
+
+    try{
+      const res = await fetch(`/products/${BONUS_HANDLE}.js`);
+      const bonus = await res.json();
+      const firstAvailable = bonus.variants.find(v => v.available) || bonus.variants[0];
+      if (firstAvailable) await addToCart(firstAvailable.id, 1);
+    }catch(e){
+      console.warn('Bonus add failed', e);
+    }
   }
 
-  // Embed bonus settings into DOM via data-* from Liquid:
-  (function attachRules(){
-    const section = root.querySelector(':scope');
-    if(!section) return;
-    section.dataset.bonusHandle = {{ section.settings.bonus_product | default: nil | json | replace: '"', '\"' | replace: 'null', '""' }};
-    section.dataset.bonusColor = {{ section.settings.bonus_rule_color | json }};
-    section.dataset.bonusSize  = {{ section.settings.bonus_rule_size  | json }};
-  })();
+  addBtn.addEventListener('click', async ()=>{
+    const variant = resolveVariant() || (productData?.variants?.[0] || null);
+    if (!variant) return;
 
-  async function maybeAutoAddBonus(currentSelection){
-    const section = root.querySelector(':scope');
-    const handle = (section?.dataset.bonusHandle || '').trim();
-    if(!handle) return;
-
-    const wantColor = (section.dataset.bonusColor || '').toLowerCase();
-    const wantSize  = (section.dataset.bonusSize  || '').toLowerCase();
-
-    const selColor = (currentSelection['Color'] || '').toLowerCase();
-    const selSize  = (currentSelection['Size']  || '').toLowerCase();
-
-    if(selColor !== wantColor || selSize !== wantSize) return;
-
-    // Liquid-embed the bonus product JSON so we don't fetch:
-    {% if section.settings.bonus_product %}
-      const bonus = {
-        id: {{ section.settings.bonus_product.id }},
-        variants: [{% for v in section.settings.bonus_product.variants %}
-          {"id": {{ v.id }}, "title": {{ v.title | json }}, "available": {{ v.available | json }}}{% unless forloop.last %},{% endunless %}
-        {% endfor %}]
-      };
-      // Add the first available variant
-      const firstAvail = bonus.variants.find(v => v.available) || bonus.variants[0];
-      if(firstAvail) {
-        try { await addToCart(firstAvail.id, 1); } catch(e){}
-      }
-    {% endif %}
-  }
-
-  // Click “ADD TO CART”
-  els.add.addEventListener('click', async () => {
-    const v = findVariant();
-    if(!v) { els.status.textContent = 'Please select options'; return; }
-    if(!v.available){ els.status.textContent = 'Selected variant is sold out'; return; }
-
-    els.add.disabled = true; els.status.textContent = 'Adding…';
-    try {
-      await addToCart(v.id, 1);
-      await maybeAutoAddBonus(selection);
-      els.status.textContent = 'Added to cart ✓';
-    } catch(e){
-      els.status.textContent = 'Something went wrong';
-    } finally {
-      els.add.disabled = false;
+    addBtn.disabled = true;
+    try{
+      await addToCart(variant.id, 1);
+      await addBonusIfNeeded();
+      closeModal();
+      // optional: open drawer or toast
+    }catch(e){
+      console.error(e);
+      addBtn.disabled = false;
     }
   });
 })();
