@@ -6,12 +6,11 @@
 *   grid-ecomexperts.liquid
 ******************************************/
 
-/* ====== SET THESE (once) to your uploaded assets ====== */
+/* ===== Use your uploaded assets (in /assets) ===== */
 :root{
-  /* Top wide SVG frame (1440×390) */
-  --ee-frame-top: url('...frame.png');      /* e.g. https://cdn.shopify.com/s/files/.../frame-top.svg */
-  /* Bottom-right SVG frame (890×402) */
-  --ee-frame-bottom: url('...frame.png');/* e.g. https://cdn.shopify.com/s/files/.../frame-bottom.svg */
+  /* Using the same bg.svg for both overlays. Replace with your own later if needed. */
+  --ee-frame-top: url('{{ "bg.svg" | asset_url }}');     /* 1440×~390 area at the top */
+  --ee-frame-bottom: url('{{ "bg.svg" | asset_url }}');  /* ~890×402 cluster bottom-right */
 }
 
 /* ---------- Page frame (center at 1440) ---------- */
@@ -23,16 +22,16 @@
 }
 
 /* ======================================================================
-   BANNER (Frame 1957)
+   BANNER
 ====================================================================== */
 
 /* Top strip (Frame 1956) */
 .ee-banner__top {
   position: relative;
   display: flex;
-  justify-content: center;     /* center the middle message */
+  justify-content: center;         /* center the middle message */
   align-items: center;
-  gap: 360px;                  /* figma gap between left/center/right */
+  gap: 360px;                      /* left brand ↔ center text ↔ CTA gap */
   padding: 10px 50px;
   height: 64px;
   background: #F5F5F5;
@@ -42,18 +41,19 @@
 .ee-banner__brand {
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
-  font-size: 18px;             /* fits figma height ~19px */
+  font-size: 18px;
   letter-spacing: .02em;
+  color:#000;
 }
 
-/* Center tiny message + divider lines */
+/* Center tiny message + thin lines */
 .ee-banner__strip {
   position: relative;
-  width: 260px;                /* matches figma */
+  width: 260px;
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 13px;           /* figma shows tight line height */
+  line-height: 13px;
   text-align: center;
   color: #000;
 }
@@ -62,7 +62,7 @@
   content:"";
   position:absolute;
   top:50%;
-  width:110px;                 /* visual length of the thin lines */
+  width:110px;
   height:0;
   border-top:1.5px solid #333;
   transform: translateY(-50%);
@@ -70,7 +70,7 @@
 .ee-banner__strip::before{ left:-130px; }
 .ee-banner__strip::after { right:-130px; }
 
-/* Right yellow CTA */
+/* Right yellow CTA with arrow */
 .ee-btn--top {
   position: relative;
   display: inline-flex;
@@ -86,10 +86,9 @@
   font-size: 16px;
   line-height: 20px;
   color:#000;
-  padding-right:38px;          /* room for arrow head */
+  padding-right:38px;              /* room for arrow */
 }
-/* arrow shaft */
-.ee-btn--top::after {
+.ee-btn--top::after {              /* arrow shaft */
   content: "";
   position: absolute;
   right: 22px;
@@ -97,15 +96,14 @@
   height: 0;
   border-top: 1.5px solid #000;
 }
-/* arrow head (small triangle) */
-.ee-btn--top::before{
+.ee-btn--top::before{              /* arrow head */
   content:"";
   position:absolute;
   right: 10px;
   top:50%;
   transform:translateY(-50%);
   width:0;height:0;
-  border-left:7px solid #000;      /* color */
+  border-left:7px solid #000;
   border-top:5px solid transparent;
   border-bottom:5px solid transparent;
 }
@@ -113,22 +111,22 @@
 /* Hero art area (Group 1000007949) */
 .ee-banner__hero {
   position: relative;
-  height: 780px;               /* figma */
+  height: 780px;                   /* Figma */
   overflow: clip;
 }
 
-/* background illustration image (from section setting) */
+/* background illustration (from section setting) */
 .ee-banner__bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top; /* crop like figma */
+  object-position: center top;
   pointer-events: none;
 }
 
-/* --- SVG FRAME OVERLAYS (top strip + bottom-right cluster) --- */
+/* SVG FRAME OVERLAYS */
 .ee-banner__hero::before,
 .ee-banner__hero::after{
   content:"";
@@ -136,45 +134,45 @@
   pointer-events:none;
   background-repeat:no-repeat;
   background-size:contain;
+  z-index: 0;
 }
-/* Top wide frame (1440×390) pinned to the top (starts under the 64px bar) */
+/* Top wide overlay (starts below the 64px bar visually) */
 .ee-banner__hero::before{
-  left:0; top:0; right:0;
-  height:390px;
+  left:0; right:0; top:0;
+  height:390px;                        /* visual height */
   background-image: var(--ee-frame-top);
   background-position: center top;
 }
-/* Bottom-right cluster (≈890×402) aligned to right bottom area */
+/* Bottom-right cluster overlay */
 .ee-banner__hero::after{
-  width:890px; height:402px;
+  width:890px; height:402px;           /* visual size of cluster */
   right:0; bottom:0;
   background-image: var(--ee-frame-bottom);
   background-position: right bottom;
 }
 
-/* Content block positions to match figma “The Gift Guide” */
+/* Content positions (“The Gift Guide”) */
 .ee-banner__content {
   position: relative;
-  /* these paddings place text approximately where figma shows it: */
-  padding-top: 330px;          /* push down into the hero */
+  padding-top: 330px;                  /* push content into hero */
   padding-left: 67px;
   max-width: 900px;
-  z-index: 1;                  /* sit above the frames */
+  z-index: 1;                          /* above overlays */
 }
 
-/* Main heading */
+/* Heading */
 .ee-banner__title {
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 500;
   font-size: 70px;
-  line-height: 1.0;            /* 100% per figma */
+  line-height: 1.0;
   color: #000;
   margin: 0 0 24px;
 }
 
-/* Sub paragraph */
+/* Paragraph */
 .ee-banner__sub {
-  width: 483px;                /* lock to figma width */
+  width: 483px;
   font-family: 'Jost', system-ui, sans-serif;
   font-weight: 400;
   font-size: 20px;
@@ -183,7 +181,7 @@
   margin: 0 0 24px;
 }
 
-/* Primary “Shop now” button (Component 207) */
+/* Primary “Shop now” button */
 .ee-btn--primary {
   position: relative;
   display: inline-flex;
@@ -197,9 +195,9 @@
   font-family: 'Jost', system-ui, sans-serif;
   font-size: 16px;
   border: 1.5px solid #000;
-  padding-right:40px;          /* keep white arrow clear */
+  padding-right:40px;
 }
-.ee-btn--primary::after {      /* white arrow line */
+.ee-btn--primary::after {
   content: "";
   position: absolute;
   right: 24px;
@@ -208,7 +206,7 @@
   border-top: 1.5px solid #fff;
 }
 
-/* Bottom ultra-thin strip (Frame 1957 slim) */
+/* Bottom micro-strip */
 .ee-banner__foot {
   display: flex;
   justify-content: center;
@@ -225,7 +223,7 @@
   color: #000;
 }
 
-/* Make the whole banner 878px height (64 top + 780 hero + 34 bottom) */
+/* Total banner height (64 + 780 + 34) */
 .ee-banner {
   height: 878px;
   display: flex;
@@ -236,10 +234,7 @@
    GRID (Tisso vison in the wild)
 ====================================================================== */
 
-.ee-grid {
-  /* outer container spacing vs. banner bottom strip gap ≈ 90 in figma */
-  padding: 90px 50px 0;
-}
+.ee-grid { padding: 90px 50px 0; }
 
 .ee-grid__heading {
   font-family: 'Lustria', serif;
@@ -250,73 +245,47 @@
   margin: 0 0 30px;
 }
 
-/* Wrap is 1337px wide in figma; let’s center inside the 1440 frame */
 .ee-grid__wrap {
   max-width: 1339px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px; /* figma */
+  gap: 20px;
 }
 
-/* Card and image: enforce 433x444 figma look with square crop feel */
-.ee-card {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 433 / 444; /* keeps the same proportion on any screen */
-  overflow: hidden;
-}
-.ee-card__img,
-.ee-card__img img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.ee-card__img img {
-  object-fit: cover;
-  object-position: center;
-}
-
-/* Hide the title under each tile for this figma (images only) */
-.ee-card__title { 
-  position: absolute;
-  inset: auto; 
-  clip: rect(0 0 0 0); 
-  width: 1px; height: 1px; overflow: hidden; 
-}
-
-/* Quick-view hotspot placeholder – hide for now (we’ll enable next step) */
-.ee-hotspot { display: none; }
+.ee-card { position: relative; width: 100%; aspect-ratio: 433 / 444; overflow: hidden; }
+.ee-card__img, .ee-card__img img { display:block; width:100%; height:100%; }
+.ee-card__img img { object-fit: cover; object-position: center; }
+.ee-card__title { position:absolute; inset:auto; clip:rect(0 0 0 0); width:1px; height:1px; overflow:hidden; }
+.ee-hotspot { display:none; }
 
 /* ======================================================================
-   RESPONSIVE (simple)
+   RESPONSIVE
 ====================================================================== */
 
-/* Tablet */
 @media (max-width: 1100px) {
   .ee-banner__content { padding-top: 280px; }
   .ee-grid__wrap { grid-template-columns: repeat(2, 1fr); }
-  /* scale/contain frames a bit tighter on smaller screens */
   .ee-banner__hero::before{ height:320px; }
   .ee-banner__hero::after{ width:720px; height:360px; }
 }
 
-/* Mobile */
 @media (max-width: 700px) {
   .ee-banner__top { gap: 24px; padding: 8px 16px; }
-  .ee-banner__strip::before, .ee-banner__strip::after{ width:64px; left:auto; right:auto; }
+  .ee-banner__strip::before, .ee-banner__strip::after{ width:64px; }
   .ee-banner__content { padding: 240px 16px 0; }
   .ee-banner__title { font-size: 46px; }
   .ee-banner__sub { width: auto; font-size: 16px; }
   .ee-banner__foot { padding: 8px 16px; gap: 24px; }
   .ee-grid { padding: 48px 16px 0; }
   .ee-grid__wrap { grid-template-columns: 1fr; }
-  /* tighten frames */
   .ee-banner__hero::before{ height:240px; }
-  .ee-banner__hero::after{ width:100%; height:auto; aspect-ratio: 890/402; }
+  .ee-banner__hero::after{
+    width:100%; height:auto; aspect-ratio: 890/402;
+  }
 }
 
-/* Empty state helper (if any card is not filled) */
+/* Helpers */
 .ee-card--empty .ee-card__placeholder{
   width:100%;
   aspect-ratio:1/1;
@@ -328,32 +297,14 @@
   color:#888;
   font-size:14px;
 }
+.ee-grid img { aspect-ratio: 1 / 1; object-fit: cover; width: 100%; height: auto; }
 
-/* Images inside grid items (safety) */
-.ee-grid img {
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  width: 100%;
-  height: auto;
-}
-
-/* ===== Compatibility shim with previous class names (no Liquid edits) ===== */
-/* Our earlier section used .ee-grid-section + .ee-grid__title + .ee-grid__items */
-.ee-grid-section { max-width: 1440px; margin-inline: auto; }
-.ee-grid-section { padding: 90px 50px 0; }
-.ee-grid-section .ee-grid__title {
-  font-family: 'Lustria', serif; font-weight: 400; font-size: 36px; line-height: 120%; color: #000; margin: 0 0 30px;
-}
-/* Map items→wrap so layout snaps without changing markup */
+/* Compatibility with earlier class names (no Liquid edits) */
+.ee-grid-section { max-width: 1440px; margin-inline: auto; padding: 90px 50px 0; }
+.ee-grid-section .ee-grid__title { font-family:'Lustria',serif; font-weight:400; font-size:36px; line-height:120%; color:#000; margin:0 0 30px; }
 .ee-grid-section .ee-grid__items {
-  max-width: 1339px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  max-width: 1339px; margin: 0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
 }
-/* Keep card/image rules consistent */
-.ee-grid-section .ee-card { position: relative; width: 100%; aspect-ratio: 433 / 444; overflow: hidden; }
-.ee-grid-section .ee-card__img,
-.ee-grid-section .ee-card__img img { width: 100%; height: 100%; display: block; }
-.ee-grid-section .ee-card__img img { object-fit: cover; object-position: center; }
+.ee-grid-section .ee-card { position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; }
+.ee-grid-section .ee-card__img, .ee-grid-section .ee-card__img img { width:100%; height:100%; display:block; }
+.ee-grid-section .ee-card__img img { object-fit:cover; object-position:center; }
