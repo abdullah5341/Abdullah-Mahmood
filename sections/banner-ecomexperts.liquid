@@ -1,32 +1,27 @@
 {% comment %}
 EE • Banner (Custom)
 Top strip (brand + center msg + yellow CTA)
-Hero with two SVG overlays (up.svg & down.svg), optional bg image, title, sub, CTA
+Hero with background illustration, title, sub, primary CTA
 Bottom micro strip
+Matches classes used in ecomexperts.css
 {% endcomment %}
 
 <section class="ee-banner" id="ee-banner-{{ section.id }}">
 
-  {%- comment -%}
-  Inject the real asset URLs as CSS variables so we don't rely on .css.liquid.
-  {%- endcomment -%}
-  {% style %}
-    #ee-banner-{{ section.id }}{
-      --ee-frame-top: url({{ 'up.svg'   | asset_url }});
-      --ee-frame-bottom: url({{ 'down.svg' | asset_url }});
-    }
-  {% endstyle %}
-
   <!-- Top strip (Frame 1956) -->
   <div class="ee-banner__top">
     <div class="ee-banner__brand">{{ section.settings.brand | escape }}</div>
+
+    <!-- center text with hairline dividers -->
     <div class="ee-banner__strip">{{ section.settings.center_strip | escape }}</div>
+
     {% if section.settings.top_cta_label != blank %}
       <a
-        class="ee-btn--top"
+        class="ee-btn ee-btn--top"
         {% if section.settings.top_cta_url != blank %} href="{{ section.settings.top_cta_url }}"{% endif %}
+        aria-label="{{ section.settings.top_cta_label | escape }}"
       >
-        {{ section.settings.top_cta_label }}
+        <span class="ee-btn__label">{{ section.settings.top_cta_label }}</span>
       </a>
     {% endif %}
   </div>
@@ -53,10 +48,11 @@ Bottom micro strip
 
       {% if section.settings.primary_label != blank %}
         <a
-          class="ee-btn--primary"
+          class="ee-btn ee-btn--primary"
           {% if section.settings.primary_url != blank %} href="{{ section.settings.primary_url }}"{% endif %}
+          aria-label="{{ section.settings.primary_label | escape }}"
         >
-          {{ section.settings.primary_label }}
+          <span class="ee-btn__label">{{ section.settings.primary_label }}</span>
         </a>
       {% endif %}
     </div>
