@@ -428,3 +428,25 @@
 .ee-modal__close{
   right:8px; top:6px; font-size:18px; line-height:1; width:28px; height:28px;
 }
+/* Ensure hotspot is visible even if SVG var fails */
+.ee-hotspot{
+  position:absolute; right:18px; top:18px; width:46px; height:46px;
+  border:none; padding:0; cursor:pointer;
+  background:rgba(248,248,248,.9); border-radius:999px;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
+}
+.ee-hotspot::before{
+  content:"+";
+  display:block;
+  position:absolute; inset:0;
+  font-size:22px; line-height:46px; text-align:center;
+  color:#000;
+}
+/* When the SVG var is set, it overrides the plus text */
+.ee-hotspot::before{
+  background-image: var(--ee-plus);
+  background-repeat:no-repeat;
+  background-size:20px 20px;
+  background-position:center;
+  color: transparent; /* hide + when SVG is present */
+}
