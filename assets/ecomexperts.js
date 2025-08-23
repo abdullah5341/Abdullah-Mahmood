@@ -1,212 +1,173 @@
-/* ===================================================================
-   Ecomexperts – Quick View modal logic (no jQuery)
-=================================================================== */
-(function () {
-  const $ = (sel, ctx=document) => ctx.querySelector(sel);
-  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+/* ===== EE Quick-View: open from image or + button, no jQuery ===== */
+(function(){
+  const root = document;
+  const modal = root.querySelector('[data-modal]');
+  if(!modal) return;
 
-  const modal = $('.ee-modal');
-  if (!modal) return;
+  const dlg = modal.querySelector('.ee-modal__dialog');
+  const back = modal.querySelector('[data-close]');
+  const mediaEl = modal.querySelector('[data-media]');
+  const titleEl = modal.querySelector('[data-title]');
+  const priceEl = modal.querySelector('[data-price]');
+  const descEl  = modal.querySelector('[data-desc]');
+  const colorWrap = modal.querySelector('[data-color-wrap]');
+  const colorBox  = modal.querySelector('[data-color]');
+  const sizeWrap  = modal.querySelector('[data-size-wrap]');
+  const sizeSel   = modal.querySelector('[data-size]');
+  const addBtn    = modal.querySelector('[data-add]');
+  const statusEl  = modal.querySelector('[data-status]');
 
-  const dialog = $('.ee-modal__dialog', modal);
-  const imgEl  = $('.ee-modal__img', modal);
-  const nameEl = $('.ee-name', modal);
-  const priceEl= $('.ee-price', modal);
-  const descEl = $('.ee-desc', modal);
-  const colorWrap = $('[data-color-wrap]', modal);
-  const colorBox  = $('.ee-color', modal);
-  const sizeWrap  = $('[data-size-wrap]', modal);
-  const sizeBtn   = $('.ee-size__select', modal);
-  const sizeText  = $('.ee-size__text', modal);
-  const sizeMenu  = $('.ee-size__menu', modal);
-  const addBtn    = $('[data-add]', modal);
+  let current = null;   // hydrated product json
+  let chosen = { };     // color, size
 
-  // Handle for the product that should be auto-added for Black + Medium
-  const BONUS_HANDLE = 'soft-winter-jacket';  // change if your handle differs
+  // Read section-level bonus rule from DOM (rendered in schema settings via data attributes if you prefer)
+  // Here we will extract them from theme editor globals rendered into the modal’s dataset (optional).
+  const section = modal.closest('section.ee-grid');
+  const bonusHandle = section?.dataset?.bonusHandle || null; // not required if you already add by ID
+  const bonusRuleColor = (section?.dataset?.bonusColor || 'Black').toLowerCase();
+  const bonusRuleSize  = (section?.dataset?.bonusSize || 'M').toLowerCase();
+  const bonusProductId = section?.dataset?.bonusProductId || null; // we’ll use this when available
 
-  let productData = null;           // /products/{handle}.js
-  let selectedColor = null;
-  let selectedSize  = null;
+  function openForBlock(blockId){
+    // pull product json
+    const jsonEl = root.getElementById(`ee-product-json-${blockId}`);
+    if(!jsonEl) return;
+    current = JSON.parse(jsonEl.textContent);
 
-  function openModal() {
-    modal.classList.add('is-open');
-    document.documentElement.classList.add('ee-lock');
-    sizeMenu.classList.remove('is-open');
-    sizeBtn.setAttribute('aria-expanded', 'false');
-  }
-  function closeModal() {
-    modal.classList.remove('is-open');
-    document.documentElement.classList.remove('ee-lock');
-    productData = null;
-    selectedColor = selectedSize = null;
-    addBtn.disabled = true;
+    // hydrate UI
+    mediaEl.src = current.images?.[0] || '';
+    titleEl.textContent = current.title;
+    priceEl.textContent = current.price_formatted;
+    descEl.textContent  = current.description || '';
+
+    // options
+    const optColor = (current.options || []).find(o => o.name.toLowerCase() === 'color');
+    const optSize  = (current.options || []).find(o => o.name.toLowerCase() === 'size');
+
+    // colors -> two boxes like the design (but supports >2 as well)
     colorBox.innerHTML = '';
-    sizeMenu.innerHTML = '';
-    sizeText.textContent = 'Choose your size';
+    if(optColor && optColor.values.length){
+      colorWrap.hidden = false;
+      optColor.values.forEach((v,i)=>{
+        const b = root.createElement('button');
+        b.type = 'button';
+        b.textContent = v.value || v;
+        b.dataset.value = v.value || v;
+        b.addEventListener('click', ()=>{
+          [...colorBox.children].forEach(x=>x.removeAttribute('data-active'));
+          b.setAttribute('data-active','true');
+          chosen.color = b.dataset.value;
+        });
+        if(i===0){ b.setAttribute('data-active','true'); chosen.color = b.value || b.dataset.value; }
+        colorBox.appendChild(b);
+      });
+    }else{
+      colorWrap.hidden = true;
+      chosen.color = undefined;
+    }
+
+    // sizes
+    sizeSel.innerHTML = '';
+    if(optSize && optSize.values.length){
+      sizeWrap.hidden = false;
+      const ph = root.createElement('option');
+      ph.value = ''; ph.textContent = 'Choose your size'; sizeSel.appendChild(ph);
+      optSize.values.forEach(v=>{
+        const o = root.createElement('option');
+        const val = v.value || v;
+        o.value = val; o.textContent = val;
+        sizeSel.appendChild(o);
+      });
+      sizeSel.onchange = ()=>{ chosen.size = sizeSel.value || undefined; };
+    }else{
+      sizeWrap.hidden = true;
+      chosen.size = undefined;
+    }
+
+    // reset status
+    statusEl.textContent = '';
+    addBtn.disabled = false;
+
+    // show
+    modal.hidden = false;
+    root.body.style.overflow = 'hidden';
   }
 
+  function close(){
+    modal.hidden = true;
+    root.body.style.overflow = '';
+  }
+
+  // open handlers (image and +)
+  root.addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-open-quick]');
+    if(!btn) return;
+    e.preventDefault();
+    const id = btn.getAttribute('data-block-id');
+    if(id) openForBlock(id);
+  });
+
+  // close handlers
   modal.addEventListener('click', (e)=>{
-    if (e.target.hasAttribute('data-close')) closeModal();
+    if(e.target.hasAttribute('data-close') || e.target === modal) close();
   });
-  document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
-  });
+  root.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !modal.hidden) close(); });
 
-  // Toggle size dropdown
-  sizeBtn.addEventListener('click', ()=>{
-    const open = sizeMenu.classList.toggle('is-open');
-    sizeBtn.setAttribute('aria-expanded', String(open));
-  });
-
-  // Hotspots
-  $$('.ee-card .ee-hotspot').forEach(btn=>{
-    btn.addEventListener('click', async (e)=>{
-      const card = btn.closest('.ee-card');
-      const handle = card.getAttribute('data-handle');
-
-      // Prefill from card
-      imgEl.src = card.getAttribute('data-featured');
-      imgEl.alt = card.getAttribute('data-title');
-      nameEl.textContent = card.getAttribute('data-title');
-      priceEl.textContent = card.getAttribute('data-price');
-      descEl.textContent  = card.getAttribute('data-desc');
-
-      // Fetch full product JSON for options/variants
-      try{
-        const res = await fetch(`/products/${handle}.js`);
-        productData = await res.json();
-      }catch(err){
-        console.error('Failed to fetch product JSON', err);
-        return openModal();
-      }
-
-      // Render Color pills (supports option name "Color")
-      const colorOpt = productData.options.find(o => /color/i.test(o.name));
-      if (colorOpt && colorOpt.values && colorOpt.values.length){
-        colorWrap.hidden = false;
-        colorBox.innerHTML = '';
-        // Figma shows 2 pills; we’ll render all, but keep same style
-        colorOpt.values.forEach((val, i)=>{
-          const sw = document.createElement('button');
-          sw.type = 'button';
-          sw.className = 'ee-swatch';
-          sw.setAttribute('data-color', val);
-
-          const box = document.createElement('span');
-          box.className = 'ee-swatch__box';
-          // simple color fill when recognizable:
-          const cssColor = val.toLowerCase();
-          if (['black','white','red','blue','grey','gray','green'].includes(cssColor)){
-            box.style.background = cssColor === 'grey' ? 'gray' : cssColor;
-          }
-          const label = document.createElement('span');
-          label.className = 'ee-swatch__name';
-          label.textContent = val;
-
-          sw.append(box, label);
-          colorBox.append(sw);
-
-          sw.addEventListener('click', ()=>{
-            selectedColor = val;
-            $$('.ee-swatch', colorBox).forEach(s=>s.classList.remove('is-active'));
-            sw.classList.add('is-active');
-            syncAddState();
-          });
-        });
-      }else{
-        colorWrap.hidden = true;
-        selectedColor = null;
-      }
-
-      // Render Size list (supports option name "Size")
-      const sizeOpt = productData.options.find(o => /size/i.test(o.name));
-      if (sizeOpt && sizeOpt.values && sizeOpt.values.length){
-        sizeWrap.hidden = false;
-        sizeMenu.innerHTML = '';
-        sizeOpt.values.forEach(val=>{
-          const opt = document.createElement('button');
-          opt.type = 'button';
-          opt.className = 'ee-size__opt';
-          opt.textContent = val;
-          opt.addEventListener('click', ()=>{
-            selectedSize = val;
-            sizeText.textContent = val;
-            $$('.ee-size__opt', sizeMenu).forEach(o=>o.classList.remove('is-active'));
-            opt.classList.add('is-active');
-            sizeMenu.classList.remove('is-open');
-            sizeBtn.setAttribute('aria-expanded','false');
-            syncAddState();
-          });
-          sizeMenu.append(opt);
-        });
-      }else{
-        sizeWrap.hidden = true;
-        selectedSize = null;
-      }
-
-      openModal();
-      syncAddState();
-    });
-  });
-
-  function syncAddState(){
-    // enable button if we can resolve a variant with current selections
-    if (!productData) { addBtn.disabled = true; return; }
-    const variant = resolveVariant();
-    addBtn.disabled = !variant;
-  }
-
-  function resolveVariant(){
-    // Matches variant by options. Works whether product has Color/Size or different names.
-    return productData.variants.find(v=>{
-      let ok = true;
-      if (selectedColor){
-        ok = ok && [v.option1, v.option2, v.option3].some(o => (o||'').toLowerCase() === selectedColor.toLowerCase());
-      }
-      if (selectedSize){
-        ok = ok && [v.option1, v.option2, v.option3].some(o => (o||'').toLowerCase() === selectedSize.toLowerCase());
-      }
-      return ok;
-    }) || null;
-  }
-
-  async function addToCart(variantId, qty=1){
-    const res = await fetch('/cart/add.js', {
+  // Add to cart (with Black+M rule auto-add)
+  async function addToCart(variantId, qty){
+    const r = await fetch('/cart/add.js', {
       method:'POST',
-      headers:{ 'Content-Type':'application/json' },
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ id: variantId, quantity: qty })
     });
-    if (!res.ok) throw new Error('add.js failed');
-    return res.json();
+    if(!r.ok) throw new Error('Add to cart failed');
+    return r.json();
   }
 
-  async function addBonusIfNeeded(){
-    if (!(selectedColor && selectedSize)) return;
-    if (selectedColor.toLowerCase() !== 'black') return;
-    if (selectedSize.toLowerCase() !== 'm') return;
-
-    try{
-      const res = await fetch(`/products/${BONUS_HANDLE}.js`);
-      const bonus = await res.json();
-      const firstAvailable = bonus.variants.find(v => v.available) || bonus.variants[0];
-      if (firstAvailable) await addToCart(firstAvailable.id, 1);
-    }catch(e){
-      console.warn('Bonus add failed', e);
+  function findVariantId(){
+    if(!current) return null;
+    // match variant by chosen options if they exist
+    for(const v of current.variants){
+      let ok = true;
+      const names = (current.options || []).map(o=>o.name.toLowerCase());
+      if(chosen.color){
+        const idx = names.indexOf('color');
+        if(idx>-1 && (v.options[idx]||'').toLowerCase() !== chosen.color.toLowerCase()) ok=false;
+      }
+      if(chosen.size){
+        const idx = names.indexOf('size');
+        if(idx>-1 && (v.options[idx]||'').toLowerCase() !== chosen.size.toLowerCase()) ok=false;
+      }
+      if(ok && v.available) return v.id;
     }
+    // fallback first available
+    const first = current.variants.find(v=>v.available);
+    return first ? first.id : null;
   }
 
   addBtn.addEventListener('click', async ()=>{
-    const variant = resolveVariant() || (productData?.variants?.[0] || null);
-    if (!variant) return;
-
-    addBtn.disabled = true;
     try{
-      await addToCart(variant.id, 1);
-      await addBonusIfNeeded();
-      closeModal();
-      // optional: open drawer or toast
-    }catch(e){
-      console.error(e);
+      addBtn.disabled = true;
+      statusEl.textContent = 'Adding…';
+
+      const mainId = findVariantId();
+      if(!mainId) throw new Error('No available variant');
+
+      await addToCart(mainId, 1);
+
+      // bonus rule: Color=Black AND Size=M ⇒ add bonus product if configured
+      const colorHit = (chosen.color||'').toLowerCase() === bonusRuleColor;
+      const sizeHit  = (chosen.size ||'').toLowerCase() === bonusRuleSize;
+
+      if(colorHit && sizeHit && bonusProductId){
+        try{ await addToCart(Number(bonusProductId), 1); }catch(_e){}
+      }
+
+      statusEl.textContent = 'Added!';
+      setTimeout(close, 600);
+    }catch(err){
+      console.error(err);
+      statusEl.textContent = 'Sorry, could not add to cart.';
       addBtn.disabled = false;
     }
   });
