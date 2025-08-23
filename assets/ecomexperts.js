@@ -1,187 +1,182 @@
-/* ===== EE Quick-View (editor-safe) — no jQuery ===== */
-(function(){
-  const root = document;
+/* EE Quick View bootstrap — works in Theme Editor too */
+(function () {
+  // Reusable helpers
+  const $ = (sel, root = document) => root.querySelector(sel);
 
-  function initOnce(scope){
-    // find the first modal inside the given scope (or document)
-    const host = scope || root;
-    const modal = host.querySelector('[data-modal]');
-    if(!modal || modal.__eeBound) return;   // already wired or not present
+  const modal = document.querySelector('[data-modal]');
+  const mediaEl = $('[data-media]', modal);
+  const titleEl = $('[data-title]', modal);
+  const priceEl = $('[data-price]', modal);
+  const descEl  = $('[data-desc]', modal);
+  const colorWrap = $('[data-color-wrap]', modal);
+  const colorBox  = $('[data-color]', modal);
+  const sizeWrap  = $('[data-size-wrap]', modal);
+  const sizeSel   = $('[data-size]', modal);
+  const statusEl  = $('[data-status]', modal);
+  const addBtn    = $('[data-add]', modal);
 
-    modal.__eeBound = true;
+  let currentData = null;
+  let selected = { color: null, size: null, variantId: null };
 
-    const back = modal.querySelector('[data-close]');
-    const mediaEl = modal.querySelector('[data-media]');
-    const titleEl = modal.querySelector('[data-title]');
-    const priceEl = modal.querySelector('[data-price]');
-    const descEl  = modal.querySelector('[data-desc]');
-    const colorWrap = modal.querySelector('[data-color-wrap]');
-    const colorBox  = modal.querySelector('[data-color]');
-    const sizeWrap  = modal.querySelector('[data-size-wrap]');
-    const sizeSel   = modal.querySelector('[data-size]');
-    const addBtn    = modal.querySelector('[data-add]');
-    const statusEl  = modal.querySelector('[data-status]');
+  function openModalWith(data) {
+    currentData = data;
 
-    const section = modal.closest('section.ee-grid');
-    const bonusRuleColor = (section?.dataset?.bonusColor || 'Black').toLowerCase();
-    const bonusRuleSize  = (section?.dataset?.bonusSize  || 'M').toLowerCase();
-    const bonusProductId = section?.dataset?.bonusProductId || null;
+    // Media
+    const img = data.images && data.images[0];
+    if (img) {
+      mediaEl.src = img;
+      mediaEl.width = 120;  // explicit for theme-check
+      mediaEl.height = 120;
+    } else {
+      mediaEl.removeAttribute('src');
+    }
 
-    let current = null;
-    let chosen  = {};
+    // Text
+    titleEl.textContent = data.title || '';
+    priceEl.textContent = data.price_formatted || '';
+    descEl.textContent  = data.description || '';
 
-    function openForBlock(blockId){
-      const jsonEl = root.getElementById(`ee-product-json-${blockId}`);
-      if(!jsonEl) return;
-      current = JSON.parse(jsonEl.textContent);
+    // Options
+    const colorOpt = (data.options || []).find(o => /color/i.test(o.name));
+    const sizeOpt  = (data.options || []).find(o => /size/i.test(o.name));
 
-      mediaEl.src = current.images?.[0] || '';
-      titleEl.textContent = current.title || '';
-      priceEl.textContent = current.price_formatted || '';
-      descEl.textContent  = current.description || '';
-
-      const optColor = (current.options || []).find(o => o.name?.toLowerCase() === 'color');
-      const optSize  = (current.options || []).find(o => o.name?.toLowerCase() === 'size');
-
-      // Colors
-      colorBox.innerHTML = '';
-      chosen = { color: undefined, size: undefined };
-
-      if(optColor && optColor.values?.length){
-        colorWrap.hidden = false;
-        optColor.values.forEach((v,i)=>{
-          const label = v.value || v;
-          const b = root.createElement('button');
-          b.type = 'button';
-          b.textContent = label;
-          b.dataset.value = label;
-          b.addEventListener('click', ()=>{
-            [...colorBox.children].forEach(x=>x.removeAttribute('data-active'));
-            b.setAttribute('data-active','true');
-            chosen.color = label;
-          });
-          if(i===0){ b.setAttribute('data-active','true'); chosen.color = label; }
-          colorBox.appendChild(b);
+    // Colors as buttons
+    colorBox.innerHTML = '';
+    if (colorOpt && colorOpt.values && colorOpt.values.length) {
+      colorWrap.hidden = false;
+      colorOpt.values.forEach((val, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = val;
+        btn.dataset.value = val;
+        btn.setAttribute('data-active', idx === 0 ? 'true' : 'false');
+        btn.addEventListener('click', () => {
+          [...colorBox.children].forEach(b => b.dataset.active = 'false');
+          btn.dataset.active = 'true';
+          selected.color = val;
+          resolveVariant();
         });
-      }else{
-        colorWrap.hidden = true;
-      }
-
-      // Sizes
-      sizeSel.innerHTML = '';
-      if(optSize && optSize.values?.length){
-        sizeWrap.hidden = false;
-        const ph = root.createElement('option');
-        ph.value = ''; ph.textContent = 'Choose your size';
-        sizeSel.appendChild(ph);
-        optSize.values.forEach(v=>{
-          const label = v.value || v;
-          const o = root.createElement('option');
-          o.value = label; o.textContent = label;
-          sizeSel.appendChild(o);
-        });
-        sizeSel.onchange = ()=>{ chosen.size = sizeSel.value || undefined; };
-      }else{
-        sizeWrap.hidden = true;
-      }
-
-      statusEl.textContent = '';
-      addBtn.disabled = false;
-
-      modal.hidden = false;
-      root.body.style.overflow = 'hidden';
-    }
-
-    function close(){
-      modal.hidden = true;
-      root.body.style.overflow = '';
-    }
-
-    function findVariantId(){
-      if(!current) return null;
-      const names = (current.options || []).map(o=>o.name?.toLowerCase());
-      for(const v of current.variants || []){
-        let ok = true;
-        if(chosen.color){
-          const idx = names.indexOf('color');
-          if(idx>-1 && (v.options[idx]||'').toLowerCase() !== chosen.color.toLowerCase()) ok=false;
-        }
-        if(chosen.size){
-          const idx = names.indexOf('size');
-          if(idx>-1 && (v.options[idx]||'').toLowerCase() !== chosen.size.toLowerCase()) ok=false;
-        }
-        if(ok && v.available) return v.id;
-      }
-      const first = (current.variants || []).find(v=>v.available);
-      return first ? first.id : null;
-    }
-
-    async function addToCart(variantId, qty){
-      const r = await fetch('/cart/add.js', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ id: variantId, quantity: qty })
+        colorBox.appendChild(btn);
       });
-      if(!r.ok) throw new Error('Add to cart failed');
-      return r.json();
+      selected.color = colorOpt.values[0];
+    } else {
+      colorWrap.hidden = true;
+      selected.color = null;
     }
 
-    // Open (image or +)
-    root.addEventListener('click', (e)=>{
-      const t = e.target.closest('[data-open-quick]');
-      if(!t) return;
-      e.preventDefault();
-      const id = t.getAttribute('data-block-id');
-      if(id) openForBlock(id);
-    });
+    // Sizes as select
+    sizeSel.innerHTML = '';
+    if (sizeOpt && sizeOpt.values && sizeOpt.values.length) {
+      sizeWrap.hidden = false;
+      sizeOpt.values.forEach((val, idx) => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = val;
+        if (idx === 0) opt.selected = true;
+        sizeSel.appendChild(opt);
+      });
+      selected.size = sizeOpt.values[0];
+    } else {
+      sizeWrap.hidden = true;
+      selected.size = null;
+    }
 
-    // Close
-    modal.addEventListener('click', (e)=>{
-      if(e.target.hasAttribute('data-close') || e.target === modal) close();
-    });
-    root.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && !modal.hidden) close(); });
+    resolveVariant();
+    statusEl.textContent = '';
+    modal.hidden = false;
+  }
 
-    // Add to cart + bonus
-    addBtn.addEventListener('click', async ()=>{
-      try{
-        addBtn.disabled = true;
-        statusEl.textContent = 'Adding…';
-        const mainId = findVariantId();
-        if(!mainId) throw new Error('No available variant');
-        await addToCart(mainId, 1);
+  function closeModal() {
+    modal.hidden = true;
+    currentData = null;
+    selected = { color: null, size: null, variantId: null };
+  }
 
-        const colorHit = (chosen.color||'').toLowerCase() === bonusRuleColor;
-        const sizeHit  = (chosen.size ||'').toLowerCase() === bonusRuleSize;
+  function resolveVariant() {
+    if (!currentData) return;
+    // Try to match by options (order-insensitive)
+    const wanted = [selected.color, selected.size].filter(Boolean).map(String.toLowerCase);
+    let match = currentData.variants && currentData.variants[0];
 
-        if(colorHit && sizeHit && bonusProductId){
-          try{ await addToCart(Number(bonusProductId), 1); }catch(_e){}
-        }
-
-        statusEl.textContent = 'Added!';
-        setTimeout(close, 600);
-      }catch(err){
-        console.error(err);
-        statusEl.textContent = 'Sorry, could not add to cart.';
-        addBtn.disabled = false;
+    if (currentData.variants && currentData.variants.length) {
+      for (const v of currentData.variants) {
+        const vo = (v.options || []).map(o => String(o).toLowerCase());
+        const ok = wanted.every(w => vo.includes(w));
+        if (ok) { match = v; break; }
       }
+    }
+    selected.variantId = match ? match.id : null;
+  }
+
+  async function addToCart() {
+    if (!selected.variantId) {
+      statusEl.textContent = 'Please choose options';
+      return;
+    }
+
+    // Build payload
+    const items = [{ id: selected.variantId, quantity: 1 }];
+
+    // Auto-add bonus (Color=Black & Size=M) if configured via section settings
+    try {
+      const grid = document.querySelector('.ee-grid');
+      const ruleColor = grid?.dataset.bonusColor;
+      const ruleSize  = grid?.dataset.bonusSize;
+      const bonusId   = grid?.dataset.bonusVariant;
+
+      if (bonusId && ruleColor && ruleSize) {
+        const c = (selected.color || '').toLowerCase();
+        const s = (selected.size  || '').toLowerCase();
+        if (c === ruleColor.toLowerCase() && s === ruleSize.toLowerCase()) {
+          items.push({ id: Number(bonusId), quantity: 1 });
+        }
+      }
+    } catch (_) {}
+
+    statusEl.textContent = 'Adding…';
+
+    const res = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ items })
+    }).then(r => r.json()).catch(() => null);
+
+    statusEl.textContent = res ? 'Added to cart' : 'Could not add to cart';
+  }
+
+  // Event delegation: works after re-renders
+  function bindDelegates(root = document) {
+    // open
+    root.addEventListener('click', (ev) => {
+      const trigger = ev.target.closest('[data-open-quick]');
+      if (!trigger) return;
+      ev.preventDefault();
+      const id = trigger.getAttribute('data-block-id');
+      const jsonEl = document.getElementById('ee-product-json-' + id);
+      if (!jsonEl) return;
+      const data = JSON.parse(jsonEl.textContent);
+      openModalWith(data);
+    }, { passive: false });
+
+    // close
+    root.querySelectorAll('[data-close]').forEach(btn => {
+      btn.addEventListener('click', closeModal);
+    });
+
+    addBtn?.addEventListener('click', addToCart);
+    modal?.addEventListener('click', (e) => {
+      if (e.target.matches('[data-close], .ee-modal__backdrop')) closeModal();
+    });
+
+    // Size change
+    sizeSel?.addEventListener('change', (e) => {
+      selected.size = e.target.value;
+      resolveVariant();
     });
   }
 
-  // Boot now (if section already in DOM)
-  function boot(scope){
-    try{ initOnce(scope); }catch(e){ console.error('[EE QV]', e); }
-  }
-
-  // 1) Standard load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', ()=>boot());
-  } else {
-    boot();
-  }
-
-  // 2) Theme Editor hot-reload — re-init when the grid section is re-rendered
-  document.addEventListener('shopify:section:load', (ev)=>{
-    const section = ev.target;
-    if(section && section.matches('.ee-grid-section, .ee-grid')) boot(section);
-  });
+  // Init now and on Theme Editor section reloads
+  document.addEventListener('DOMContentLoaded', () => bindDelegates(document));
+  document.addEventListener('shopify:section:load', (e) => bindDelegates(e.target));
+  document.addEventListener('shopify:section:unload', () => { /* no-op */ });
 })();
