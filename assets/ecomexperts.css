@@ -257,13 +257,19 @@
 /* Plus hotspot (top-right-ish like figma drop) */
 .ee-hotspot{
   position:absolute; right:18px; top:18px; width:46px; height:46px;
-  border:none; padding:0; cursor:pointer; background:rgba(248,248,248,.9);
-  border-radius:999px; filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
+  border:none; padding:0; cursor:pointer;
+  background:rgba(248,248,248,.9); border-radius:999px;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
 }
 .ee-hotspot::before{
-  content:""; position:absolute; inset:0; margin:auto; width:20px; height:20px;
-  background-image: var(--ee-plus); background-repeat:no-repeat; background-size:contain; background-position:center;
+  content:"+";
+  position:absolute; inset:0; display:block;
+  text-align:center; line-height:46px; font-size:22px; color:#000;
+  background-image: var(--ee-plus);
+  background-repeat:no-repeat; background-position:center; background-size:20px 20px;
+  color: transparent; /* hidden when SVG var resolves */
 }
+
 
 /* ---------- MODAL ---------- */
 .ee-modal[hidden]{ display:none; }
