@@ -1,0 +1,100 @@
+{% comment %}
+EE • Banner (Custom)
+Top strip (brand + center msg + yellow CTA)
+Hero with two SVG overlays (up.svg & down.svg), optional bg image, title, sub, CTA
+Bottom micro strip
+{% endcomment %}
+
+<section class="ee-banner" id="ee-banner-{{ section.id }}">
+
+  {%- comment -%}
+  Inject real asset URLs as CSS variables (no .css.liquid needed).
+  {%- endcomment -%}
+  {% style %}
+    #ee-banner-{{ section.id }}{
+      --ee-frame-top: url({{ 'up.svg'   | asset_url }});
+      --ee-frame-bottom: url({{ 'down.svg' | asset_url }});
+      --ee-arrow-top: url({{ 'Arrow1.svg' | asset_url }}); /* your exported arrow */
+    }
+  {% endstyle %}
+
+  <!-- Top strip (Frame 1956) -->
+  <div class="ee-banner__top">
+    <div class="ee-banner__brand">{{ section.settings.brand | escape }}</div>
+
+    <!-- one-line center message (no side lines) -->
+    <div class="ee-banner__strip">{{ section.settings.center_strip | escape }}</div>
+
+    {% if section.settings.top_cta_label != blank %}
+      <a
+        class="ee-btn--top"
+        {% if section.settings.top_cta_url != blank %} href="{{ section.settings.top_cta_url }}"{% endif %}
+      >
+        {{ section.settings.top_cta_label }}
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Hero (Group 1000007949; 780px high) -->
+  <div class="ee-banner__hero">
+    {% if section.settings.bg_image %}
+      {{ section.settings.bg_image
+        | image_url: width: 2880
+        | image_tag:
+          class: 'ee-banner__bg',
+          alt: section.settings.bg_image.alt | default: section.settings.title
+      }}
+    {% endif %}
+
+    <div class="ee-banner__content">
+      {% if section.settings.title != blank %}
+        <h1 class="ee-banner__title">{{ section.settings.title }}</h1>
+      {% endif %}
+
+      {% if section.settings.subtitle != blank %}
+        <p class="ee-banner__sub">{{ section.settings.subtitle }}</p>
+      {% endif %}
+
+      {% if section.settings.primary_label != blank %}
+        <a
+          class="ee-btn--primary"
+          {% if section.settings.primary_url != blank %} href="{{ section.settings.primary_url }}"{% endif %}
+        >
+          {{ section.settings.primary_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Bottom micro-strip -->
+  {% if section.settings.bottom_strip != blank %}
+    <div class="ee-banner__foot">
+      {{ section.settings.bottom_strip }}
+    </div>
+  {% endif %}
+
+  {% schema %}
+  {
+    "name": "EE • Banner (Custom)",
+    "class": "ee-banner-section",
+    "settings": [
+      { "type": "text", "id": "brand", "label": "Brand (left, top strip)", "default": "TISSO VISON" },
+      { "type": "text", "id": "center_strip", "label": "Center message (top strip)", "default": "Find the ideal gift for your loved ones." },
+
+      { "type": "text", "id": "top_cta_label", "label": "Top CTA label (yellow button)", "default": "CHOOSE GIFT" },
+      { "type": "url",  "id": "top_cta_url",   "label": "Top CTA link" },
+
+      { "type": "image_picker", "id": "bg_image", "label": "Background illustration (hero)" },
+
+      { "type": "text", "id": "title", "label": "Hero title", "default": "The Gift Guide" },
+      { "type": "textarea", "id": "subtitle", "label": "Hero paragraph", "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season." },
+
+      { "type": "text", "id": "primary_label", "label": "Primary button label", "default": "SHOP NOW" },
+      { "type": "url",  "id": "primary_url",   "label": "Primary button link" },
+
+      { "type": "text", "id": "bottom_strip", "label": "Bottom micro-strip", "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL" }
+    ],
+    "presets": [{ "name": "EE • Banner (Custom)" }]
+  }
+  {% endschema %}
+</section>

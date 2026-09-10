@@ -1,0 +1,458 @@
+/******************************************
+* EE — Desktop 22 (1440 × 2000)
+* Banner + 3×2 Grid
+******************************************/
+
+/* Fallbacks only; real URLs are injected inline by the section */
+.ee-banner{
+  --ee-frame-top: none;     /* up.svg */
+  --ee-frame-bottom: none;  /* down.svg */
+  --ee-arrow-top: none;     /* Arrow1.svg */
+  --ee-plus: none;          /* plus.svg */
+}
+
+/* ---------- Page frame (center at 1440) ---------- */
+.ee-banner,
+.ee-grid {
+  max-width: 1440px;
+  margin-inline: auto;
+  background: #fff;
+}
+
+/* ======================================================================
+   BANNER
+====================================================================== */
+
+/* Top strip (Frame 1956) */
+.ee-banner__top {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 360px;                      /* brand ↔ center text ↔ CTA (Figma) */
+  padding: 10px 50px;
+  height: 64px;
+  background: #F5F5F5;
+}
+
+/* Left brand */
+.ee-banner__brand {
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 18px;                 /* Figma ≈19px box height */
+  letter-spacing: .02em;
+  color:#000;
+}
+
+/* Center tiny message — single line, no side rules */
+.ee-banner__strip {
+  width: auto;
+  white-space: nowrap;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: center;
+  color: #000;
+}
+.ee-banner__strip::before,
+.ee-banner__strip::after{
+  content: none; /* hide figma’s thin lines */
+}
+
+/* Right yellow CTA with SVG arrow */
+.ee-btn--top {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 207px;
+  height: 44px;
+  background: #FFF544;
+  border: 1px solid #000;
+  text-transform: uppercase;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color:#000;
+  padding-right:56px;              /* space for arrow */
+}
+/* render Arrow1.svg in black on the right */
+.ee-btn--top::after{
+  content:"";
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform: translateY(-50%);
+  width:25px;                      /* Figma arrow 25×~12 */
+  height:12px;
+  background-image: var(--ee-arrow-top);
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+}
+
+/* Hero (Group 1000007949) */
+.ee-banner__hero {
+  position: relative;
+  height: 780px;                   /* exact per Figma */
+  overflow: hidden;
+}
+
+/* Optional background photo (if used). Keep beneath overlays. */
+.ee-banner__bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  pointer-events:none;
+  z-index:-1;                      /* beneath overlays */
+}
+
+/* === SVG FRAME OVERLAYS (exact px sizes) === */
+.ee-banner__hero::before,
+.ee-banner__hero::after{
+  content:"";
+  position:absolute;
+  pointer-events:none;
+  background-repeat:no-repeat;
+  z-index:0;                       /* above bg image, below text */
+}
+
+/* Top overlay (UP): 1440×390 anchored to hero top */
+.ee-banner__hero::before{
+  left:0; right:0; top:0;
+  height:390px;
+  background-image: var(--ee-frame-top);
+  background-position: center top;
+  background-size: 1440px 390px;
+}
+
+/* Bottom-right overlay (DOWN): 890×402, right aligned, bottom */
+.ee-banner__hero::after{
+  right:0; bottom:0;
+  width:890px; height:402px;
+  background-image: var(--ee-frame-bottom);
+  background-position: right bottom;
+  background-size: 890px 402px;
+}
+
+/* Content block – positions to match Figma text coordinates */
+.ee-banner__content{
+  position: relative;
+  z-index: 1;                      /* above the SVG frames */
+  padding-left: 67px;              /* Figma “Left: 67px” */
+  padding-top: 425px;              /* 489 (title top) − 64 (top bar) */
+  max-width: 900px;
+}
+
+/* Title */
+.ee-banner__title{
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 70px;
+  line-height: 1;                  /* 100% */
+  margin: 0 0 24px;
+  color:#000;
+}
+
+/* Paragraph — width 483, 20/140% */
+.ee-banner__sub{
+  width: 483px;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 140%;
+  margin: 0;
+  color:#000;
+}
+
+/* Primary hero button — black with white arrow */
+.ee-btn--primary{
+  position: relative;
+  display: inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:220px;
+  height:50px;
+  margin-top: 76px;               /* aligns to ~743px overall y */
+  background:#000;
+  color:#fff;
+  text-transform:uppercase;
+  font-family:'Jost', system-ui, sans-serif;
+  font-size:16px;
+  border:1px solid #000;
+  padding-right:56px;              /* space for arrow */
+}
+/* white arrow using mask so we can reuse the black SVG */
+.ee-btn--primary::after{
+  content:"";
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform: translateY(-50%);
+  width:25px;
+  height:12px;
+  -webkit-mask-image: var(--ee-arrow-top);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--ee-arrow-top);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  background-color:#fff;          /* arrow color */
+}
+
+/* Bottom micro-strip (Frame 1957 slim) */
+.ee-banner__foot{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px 50px;
+  gap:375px;
+  height:34px;
+  background:#F5F5F5;
+  font-family:'Jost', system-ui, sans-serif;
+  font-weight:400;
+  font-size:16px;
+  line-height:13px;
+  text-align:center;
+  color:#000;
+}
+
+/* Total banner height = 64 + 780 + 34 */
+.ee-banner{
+  height:878px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ======================================================================
+   GRID
+====================================================================== */
+
+/* ---------- GRID LAYOUT ---------- */
+.ee-grid{ padding:90px 50px 120px; }
+.ee-grid__heading{
+  font-family:'Lustria', serif;
+  font-weight:400;
+  font-size:36px;
+  line-height:120%;
+  color:#000; margin:0 0 30px;
+}
+.ee-grid__wrap{
+  max-width:1339px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.ee-card{ position:relative; width:100%; aspect-ratio:433/444; overflow:hidden; background:#fff; }
+.ee-card__img, .ee-card__img img{ display:block; width:100%; height:100%; }
+.ee-card__img img{ object-fit:cover; object-position:center; }
+
+/* Plus hotspot (top-right-ish like figma drop) */
+.ee-hotspot{
+  position:absolute; right:18px; top:18px; width:46px; height:46px;
+  border:none; padding:0; cursor:pointer;
+  background:rgba(248,248,248,.9); border-radius:999px;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
+}
+.ee-hotspot::before{
+  content:"+";
+  position:absolute; inset:0; display:block;
+  text-align:center; line-height:46px; font-size:22px; color:#000;
+  background-image: var(--ee-plus);
+  background-repeat:no-repeat; background-position:center; background-size:20px 20px;
+  color: transparent; /* hidden when SVG var resolves */
+}
+
+
+/* ---------- MODAL ---------- */
+.ee-modal[hidden]{ display:none; }
+.ee-modal{ position:fixed; inset:0; z-index:1100; }
+.ee-modal__backdrop{
+  position:absolute; inset:0; background:rgba(0,0,0,.2);
+}
+.ee-modal__dialog{
+  position:relative; max-width:586px; background:#fff; margin:10vh auto; padding:20px;
+  box-shadow:0 12px 32px rgba(0,0,0,.25);
+  font-family:'Jost', system-ui, sans-serif;
+}
+.ee-modal__close{
+  position:absolute; right:12px; top:8px; width:32px; height:32px;
+  border:none; background:transparent; font-size:22px; cursor:pointer;
+}
+.ee-modal__body{ display:flex; gap:16px; }
+.ee-modal__media{ width:120px; flex:0 0 120px; }
+.ee-modal__media img{ width:120px; height:120px; object-fit:cover; object-position:center; border:1px solid #000; }
+.ee-modal__info{ flex:1; }
+
+.ee-p-name{ font-weight:400; font-size:16px; margin:0 0 6px; }
+.ee-p-price{ font-family:'Lustria', serif; font-size:16px; line-height:1.2; margin-bottom:8px; }
+.ee-p-desc{ font-size:14px; line-height:1.1; margin:0 0 14px; max-width:260px; }
+
+.ee-field{ margin:14px 0; }
+.ee-field__label{ display:block; font-size:14px; color:#333; margin-bottom:6px; }
+
+/* Color buttons (two chips like the figma boxes) */
+.ee-color{ display:flex; gap:6px; }
+.ee-color button{
+  position:relative; min-width:94px; height:36px; border:.5px solid #000; background:#fff;
+  font-size:18px; text-transform:capitalize; letter-spacing:-.02em; cursor:pointer;
+}
+.ee-color button[data-active="true"]::after{ /* filled right box when active */
+  content:""; position:absolute; right:0; top:0; bottom:0; width:50%; background:#000;
+}
+.ee-color button span{ position:relative; z-index:1; color:#000; padding:0 10px; }
+
+/* Size select like figma rectangle with caret */
+.ee-size__select{ position:relative; }
+.ee-size select{
+  appearance:none; -webkit-appearance:none; width:271px; height:64px; border:.5px solid #000; padding:0 42px 0 18px;
+  font-size:16px; letter-spacing:-.02em; background:#fff;
+}
+.ee-caret{
+  position:absolute; right:12px; top:50%; width:12px; height:12px; transform:translateY(-50%) rotate(45deg);
+  border-right:1.5px solid #000; border-bottom:1.5px solid #000;
+}
+
+/* Primary ADD TO CART button (modal) — separate class to avoid hero clash */
+.ee-btn--add{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:271px; height:45px; background:#000; color:#fff; border:1px solid #000;
+  text-transform:uppercase; font-size:16px; padding-right:40px; cursor:pointer;
+}
+.ee-btn--add::after{ content:""; position:absolute; right:16px; width:28px; border-top:1.5px solid #fff; }
+.ee-btn--add::before{
+  content:""; position:absolute; right:4px; top:50%; transform:translateY(-50%);
+  border-left:7px solid #fff; border-top:5px solid transparent; border-bottom:5px solid transparent;
+}
+
+.ee-status{ margin-top:10px; font-size:14px; min-height:18px; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1100px){
+  .ee-grid__wrap{ grid-template-columns:repeat(2,1fr); }
+}
+
+@media (max-width: 700px){
+  .ee-grid{ padding:48px 16px 80px; }
+  .ee-grid__wrap{ grid-template-columns:1fr; }
+  .ee-modal__dialog{ margin:6vh 16px; }
+}
+
+
+/* ======================================================================
+   RESPONSIVE — BANNER
+====================================================================== */
+
+@media (max-width: 1100px){
+  .ee-banner__content{ padding-top: 380px; }
+  .ee-banner__hero::before{ height:320px; background-size: 1440px 320px; }
+  .ee-banner__hero::after{ width:720px; height:360px; background-size:720px 360px; }
+  .ee-grid__wrap{ grid-template-columns:repeat(2,1fr); }
+}
+
+@media (max-width: 700px){
+  .ee-banner__top{ gap:24px; padding:8px 16px; }
+  .ee-banner__content{ padding: 240px 16px 0; }
+  .ee-banner__title{ font-size:46px; }
+  .ee-banner__sub{ width:auto; font-size:16px; }
+  .ee-btn--primary{ margin-top:32px; }
+  .ee-banner__foot{ padding:8px 16px; gap:24px; }
+
+  .ee-grid{ padding:48px 16px 0; }
+  .ee-grid__wrap{ grid-template-columns:1fr; }
+
+  .ee-banner__hero::before{ height:240px; background-size: 1440px 240px; }
+  .ee-banner__hero::after{
+    right:0; bottom:0; width:100%; height:auto; aspect-ratio: 890/402;
+    background-size: contain;
+  }
+}
+/* ===== Quick-view “small card” styling (Figma 311 × 447) ===== */
+.ee-modal--card{
+  width: 311px;
+  max-width: 311px;
+  padding: 16px 16px 18px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  border: 1px solid rgba(0,0,0,.05);
+  background:#fff;
+}
+
+.ee-modal__body{ display:block; } /* stack vertically for the small card */
+
+.ee-modal__media{
+  width: 116px; height: 116px; border:1px solid #000;
+  margin-bottom: 8px;
+}
+.ee-modal__media img{ width:116px; height:116px; object-fit:cover; object-position:center; }
+
+.ee-p-name{ font-weight:300; font-size:16px; line-height:120%; margin:4px 0 2px; }
+.ee-p-price{ font-family:'Lustria', serif; font-size:16px; line-height:120%; margin-bottom:6px; }
+.ee-p-desc{ font-weight:300; font-size:14px; line-height:110%; letter-spacing:-.01em; margin:6px 0 10px; max-width:none; }
+
+.ee-field{ margin:10px 0; }
+.ee-field__label{ font-size:14px; color:#333; margin-bottom:4px; }
+
+/* color chips -> two half boxes like the design */
+.ee-color{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:0;
+  border:.5px solid #000;
+  height:36px;
+}
+.ee-color button{
+  position:relative; border:none; background:#fff; font-size:18px; text-transform:capitalize; letter-spacing:-.02em; cursor:pointer;
+}
+.ee-color button + button{ border-left:.5px solid #000; }
+.ee-color button[data-active="true"]{ background:#000; color:#fff; }
+
+/* size select */
+.ee-size__select{ position:relative; }
+.ee-size select{
+  width:100%; height:64px; border:.5px solid #000; padding:0 42px 0 12px;
+  font-size:16px; letter-spacing:-.02em; background:#fff;
+}
+.ee-caret{ position:absolute; right:12px; top:50%; width:12px; height:12px; transform:translateY(-50%) rotate(45deg); border-right:1.5px solid #000; border-bottom:1.5px solid #000; }
+
+/* primary button in card */
+.ee-modal .ee-btn--primary{
+  width:271px; height:45px; margin-top:8px; padding-right:40px;
+}
+.ee-modal .ee-btn--primary::after{ right:16px; width:28px; border-top:1.5px solid #fff; }
+.ee-modal .ee-btn--primary::before{
+  right:4px; border-left:7px solid #fff; border-top:5px solid transparent; border-bottom:5px solid transparent;
+}
+
+/* close button */
+.ee-modal__close{
+  right:8px; top:6px; font-size:18px; line-height:1; width:28px; height:28px;
+}
+/* Ensure hotspot is visible even if SVG var fails */
+.ee-hotspot{
+  position:absolute; right:18px; top:18px; width:46px; height:46px;
+  border:none; padding:0; cursor:pointer;
+  background:rgba(248,248,248,.9); border-radius:999px;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.2));
+}
+.ee-hotspot::before{
+  content:"+";
+  display:block;
+  position:absolute; inset:0;
+  font-size:22px; line-height:46px; text-align:center;
+  color:#000;
+}
+/* When the SVG var is set, it overrides the plus text */
+.ee-hotspot::before{
+  background-image: var(--ee-plus);
+  background-repeat:no-repeat;
+  background-size:20px 20px;
+  background-position:center;
+  color: transparent; /* hide + when SVG is present */
+}

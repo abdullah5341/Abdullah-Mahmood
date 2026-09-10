@@ -4,6 +4,7 @@
   lang="{{ request.locale.iso_code }}"
 >
   <head>
+    {{ 'ecomexperts.css' | asset_url | stylesheet_tag }}
     {%- render 'stylesheets' -%}
 
     {%- if settings.favicon != blank -%}
@@ -14,7 +15,9 @@
       >
     {%- endif -%}
 
-    {% comment %} This a way to wait for main content to load when navigating to a new page so that the view transitions can work consistently {% endcomment %}
+    {%- comment -%}
+      This a way to wait for main content to load when navigating to a new page so that the view transitions can work consistently
+    {%- endcomment -%}
     <link
       rel="expect"
       href="#MainContent"
@@ -66,5 +69,8 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    {%- comment -%} Load our app JS once, non-blocking {%- endcomment -%}
+    <script src="{{ 'ecomexperts.js' | asset_url }}" defer></script>
   </body>
 </html>
